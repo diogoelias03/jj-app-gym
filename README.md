@@ -54,6 +54,7 @@ Endpoints iniciais:
 - `POST /api/v1/auth/login`
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
+- `GET /api/v1/progress` (autenticado)
 
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.

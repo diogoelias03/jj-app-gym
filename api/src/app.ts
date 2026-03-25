@@ -5,6 +5,7 @@ import { authRoutes } from "./routes/auth";
 import { checkinRoutes } from "./routes/checkins";
 import { classesRoutes } from "./routes/classes";
 import { healthRoutes } from "./routes/health";
+import { progressRoutes } from "./routes/progress";
 
 export function buildApp(): FastifyInstance {
   const app = Fastify({
@@ -19,6 +20,7 @@ export function buildApp(): FastifyInstance {
   app.register(authRoutes);
   app.register(classesRoutes);
   app.register(checkinRoutes);
+  app.register(progressRoutes);
 
   return app;
 }
