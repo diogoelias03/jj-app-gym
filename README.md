@@ -54,6 +54,7 @@ Endpoints iniciais:
 - `POST /api/v1/auth/login`
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
+- `GET /api/v1/attendances/history` (autenticado)
 - `GET /api/v1/progress` (autenticado)
 
 ## Roadmap resumido
