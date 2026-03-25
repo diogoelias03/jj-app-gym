@@ -37,6 +37,23 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `README-LAB.md`: detalhes do laboratorio de infraestrutura
 - `PROJECT-BLUEPRINT-OCI-POSTGRES.md`: plano macro do projeto
 - `BACKLOG-MVP.md`: backlog priorizado do produto
+- `api/`: esqueleto inicial da API Node.js + PostgreSQL
+
+## API bootstrap
+1. Instale Node.js 20+.
+2. Entre na pasta `api/`.
+3. Rode `npm install`.
+4. Copie `.env.example` para `.env` e ajuste o `DATABASE_URL`.
+5. Execute o schema no PostgreSQL:
+   - `psql "$DATABASE_URL" -f db/schema.sql`
+   - `psql "$DATABASE_URL" -f db/seed.sql`
+6. Inicie a API com `npm run dev`.
+
+Endpoints iniciais:
+- `GET /health`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/classes` (autenticado)
+- `POST /api/v1/checkins` (autenticado)
 
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.
