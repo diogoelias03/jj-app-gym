@@ -8,5 +8,7 @@ export const config = {
   databaseUrl:
     process.env.DATABASE_URL ??
     "postgres://postgres:postgres@localhost:5432/jj_app_gym",
-  corsOrigin: process.env.CORS_ORIGIN ?? "*"
+  corsOrigin: process.env.CORS_ORIGIN ?? "*",
+  jwtSecret: process.env.JWT_SECRET ?? "change-this-secret",
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "8h"
 };

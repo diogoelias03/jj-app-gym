@@ -44,10 +44,11 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 2. Entre na pasta `api/`.
 3. Rode `npm install`.
 4. Copie `.env.example` para `.env` e ajuste o `DATABASE_URL`.
-5. Execute o schema no PostgreSQL:
+5. Defina um `JWT_SECRET` forte no `.env`.
+6. Execute o schema no PostgreSQL:
    - `psql "$DATABASE_URL" -f db/schema.sql`
    - `psql "$DATABASE_URL" -f db/seed.sql`
-6. Inicie a API com `npm run dev`.
+7. Inicie a API com `npm run dev`.
 
 Endpoints iniciais:
 - `GET /health`
@@ -56,6 +57,10 @@ Endpoints iniciais:
 - `POST /api/v1/checkins` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
 - `GET /api/v1/progress` (autenticado)
+
+Fluxo de autenticacao:
+1. Chame `POST /api/v1/auth/login` com `email` e `password`.
+2. Use `access_token` retornado no header `Authorization: Bearer <token>`.
 
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.

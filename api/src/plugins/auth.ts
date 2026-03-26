@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { verifyAccessToken } from "../security/jwt";
 import { AuthenticatedUser } from "../types";
 
 const authHeaderSchema = z.string().startsWith("Bearer ");
@@ -10,8 +11,6 @@ declare module "fastify" {
   }
 }
 
-// MVP note: this is a lightweight token format for fast bootstrap.
-// Replace with JWT verification before production.
 export async function requireAuth(
   request: FastifyRequest,
   reply: FastifyReply
@@ -22,15 +21,11 @@ export async function requireAuth(
     return;
   }
 
-  const token = parsedHeader.data.replace("Bearer ", "").trim();
-  const [studentIdRaw, branchIdRaw] = token.split(":");
-  const studentId = Number(studentIdRaw);
-  const branchId = Number(branchIdRaw);
-
-  if (!Number.isInteger(studentId) || !Number.isInteger(branchId)) {
-    await reply.code(401).send({ error: "invalid_token_payload" });
+  try {
+    const token = parsedHeader.data.replace("Bearer ", "").trim();
+    request.user = verifyAccessToken(token);
+  } catch {
+    await reply.code(401).send({ error: "invalid_or_expired_token" });
     return;
   }
-
-  request.user = { studentId, branchId };
 }

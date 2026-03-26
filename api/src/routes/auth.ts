@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { getDbPool } from "../db";
+import { signAccessToken } from "../security/jwt";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -36,10 +37,15 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const student = result.rows[0] as { id: number; branch_id: number };
-    const token = `${student.id}:${student.branch_id}`;
+    const accessToken = signAccessToken({
+      studentId: student.id,
+      branchId: student.branch_id,
+      role: "student"
+    });
 
     return reply.send({
-      token,
+      access_token: accessToken,
+      token_type: "Bearer",
       studentId: student.id,
       branchId: student.branch_id
     });
