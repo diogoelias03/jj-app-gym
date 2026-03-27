@@ -36,18 +36,25 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(401).send({ error: "invalid_credentials" });
     }
 
-    const student = result.rows[0] as { id: number; branch_id: number };
+    const student = result.rows[0] as { id: string | number; branch_id: string | number };
+    const studentId = Number(student.id);
+    const branchId = Number(student.branch_id);
+
+    if (!Number.isInteger(studentId) || !Number.isInteger(branchId)) {
+      return reply.code(500).send({ error: "invalid_student_data" });
+    }
+
     const accessToken = signAccessToken({
-      studentId: student.id,
-      branchId: student.branch_id,
+      studentId,
+      branchId,
       role: "student"
     });
 
     return reply.send({
       access_token: accessToken,
       token_type: "Bearer",
-      studentId: student.id,
-      branchId: student.branch_id
+      studentId,
+      branchId
     });
   });
 }
