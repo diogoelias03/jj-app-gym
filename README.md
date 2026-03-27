@@ -97,6 +97,10 @@ Teste de simulacao da janela (admin):
 - Instrucoes de preenchimento:
   - `docs/ibjjf/IBJJF-MATRIX-INSTRUCTIONS.md`
 
+## Roadmap de produto
+- Planejamento em 3 ondas (MVP+, V2, V3):
+  - `ROADMAP-3-WAVES.md`
+
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.
 2. Fase 1: backend core + banco + autenticacao.
