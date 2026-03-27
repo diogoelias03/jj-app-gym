@@ -49,6 +49,22 @@ Criterios de aceite:
 - Agenda exibida respeita filial selecionada.
 - Troca de filial registra historico de alteracao.
 
+### US-013 (P0) - Solicitar troca de filial com aprovacao admin
+Como aluno, quero solicitar troca de filial para que o admin avalie e aprove/rejeite.
+
+Criterios de aceite:
+- Aluno cria solicitacao com justificativa.
+- Apenas admin aprova/rejeita.
+- Aprovacao atualiza filial do aluno automaticamente.
+
+### US-014 (P0) - Trilha de eventos de troca para BI
+Como time de produto, quero registrar eventos de troca de filial para gerar insights de UX no BI.
+
+Criterios de aceite:
+- Cada etapa gera evento (solicitada, aprovada/rejeitada, filial atualizada).
+- Eventos incluem timestamp, origem/destino e ator.
+- Dados ficam consultaveis por request e por periodo.
+
 ## Epico 3 - Agenda e presenca
 
 ### US-006 (P0) - Grade de aulas por faixa
@@ -84,6 +100,14 @@ Criterios de aceite:
 - Regras por faixa (ex.: quantidade minima de aulas).
 - Parametros editaveis por instrutor/admin.
 - Alteracoes ficam auditaveis.
+
+### US-015 (P0) - Criterio oficial IBJJF por faixa
+Como gestor tecnico, quero parametrizar regras oficiais por faixa usando documento de referencia da IBJJF.
+
+Criterios de aceite:
+- Sistema possui estrutura para regra oficial por faixa.
+- Regra referencia documento/versao oficial.
+- Endpoint de progresso exibe indicadores IBJJF relevantes.
 
 ### US-010 (P0) - Contador para proxima graduacao
 Como aluno, quero ver meu progresso para a proxima graduacao para manter motivacao.

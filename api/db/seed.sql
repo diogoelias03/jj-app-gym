@@ -43,3 +43,20 @@ values
   (4, 100, true),
   (5, 120, true)
 on conflict (belt_id) do nothing;
+
+insert into ibjjf_belt_criteria (
+  belt_id,
+  min_time_current_belt_months,
+  min_age_years,
+  requires_instructor_approval,
+  source_document_path,
+  source_document_version,
+  notes
+)
+values
+  (1, null, null, true, 'C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf', '20251220_IBJJF_Graduacao_PT', 'Regra oficial deve ser detalhada por categoria (adulto/master/juvenil) com base no documento.'),
+  (2, null, null, true, 'C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf', '20251220_IBJJF_Graduacao_PT', 'Regra oficial deve ser detalhada por categoria (adulto/master/juvenil) com base no documento.'),
+  (3, null, null, true, 'C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf', '20251220_IBJJF_Graduacao_PT', 'Regra oficial deve ser detalhada por categoria (adulto/master/juvenil) com base no documento.'),
+  (4, null, null, true, 'C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf', '20251220_IBJJF_Graduacao_PT', 'Regra oficial deve ser detalhada por categoria (adulto/master/juvenil) com base no documento.'),
+  (5, null, null, true, 'C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf', '20251220_IBJJF_Graduacao_PT', 'Regra oficial deve ser detalhada por categoria (adulto/master/juvenil) com base no documento.')
+on conflict (belt_id) do nothing;

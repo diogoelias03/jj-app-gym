@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { config } from "../config";
 import { getDbPool } from "../db";
+import { requireAdminKey } from "../plugins/admin-key";
 import { evaluateCheckinWindow } from "../services/checkin-window";
 
 const bodySchema = z.object({
@@ -13,15 +14,9 @@ export async function adminCheckinSimulationRoutes(
   app: FastifyInstance
 ): Promise<void> {
   app.post("/api/v1/admin/checkins/simulate-window", async (request, reply) => {
-    if (!config.adminApiKey) {
-      return reply
-        .code(503)
-        .send({ error: "admin_simulation_disabled", message: "Defina ADMIN_API_KEY no .env." });
-    }
-
-    const adminKey = request.headers["x-admin-key"];
-    if (adminKey !== config.adminApiKey) {
-      return reply.code(401).send({ error: "invalid_admin_key" });
+    const isAdmin = await requireAdminKey(request, reply);
+    if (!isAdmin) {
+      return;
     }
 
     const parsedBody = bodySchema.safeParse(request.body);

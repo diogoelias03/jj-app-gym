@@ -55,10 +55,14 @@ Endpoints iniciais:
 - `GET /health`
 - `POST /api/v1/auth/login`
 - `POST /api/v1/admin/checkins/simulate-window` (admin key)
+- `GET /api/v1/admin/branch-transfers/requests` (admin key)
+- `POST /api/v1/admin/branch-transfers/requests/:requestId/decision` (admin key)
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
 - `GET /api/v1/progress` (autenticado)
+- `POST /api/v1/branch-transfers/requests` (autenticado)
+- `GET /api/v1/branch-transfers/requests/my` (autenticado)
 
 Fluxo de autenticacao:
 1. Chame `POST /api/v1/auth/login` com `email` e `password`.
@@ -75,6 +79,17 @@ Teste de simulacao da janela (admin):
    - `POST /api/v1/admin/checkins/simulate-window`
    - Header: `x-admin-key: <ADMIN_API_KEY>`
    - Body: `{ "classSessionId": 1, "simulatedNow": "2026-03-30T12:00:00Z" }`
+
+## Decisoes de negocio aplicadas
+1. Troca de filial:
+   - aluno solicita;
+   - admin aprova/rejeita;
+   - sistema registra trilha de eventos para BI (`branch_transfer_events`).
+2. Regra oficial por faixa (IBJJF):
+   - estrutura adicionada em `ibjjf_belt_criteria`;
+   - referencia ao documento oficial:
+     `C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf`;
+   - endpoint de progresso ja retorna bloco `ibjjf` com indicadores de regra.
 
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.
