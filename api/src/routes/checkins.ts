@@ -3,6 +3,7 @@ import { z } from "zod";
 import { config } from "../config";
 import { getDbPool } from "../db";
 import { requireAuth } from "../plugins/auth";
+import { evaluateCheckinWindow } from "../services/checkin-window";
 
 const bodySchema = z.object({
   classSessionId: z.number().int().positive()
@@ -47,23 +48,23 @@ export async function checkinRoutes(app: FastifyInstance): Promise<void> {
       const classSession = classSessionResult.rows[0];
       const classStartsAt = new Date(classSession.starts_at);
       const serverNow = new Date(classSession.server_now);
+      const windowEval = evaluateCheckinWindow({
+        classStartsAt,
+        serverNow,
+        openHoursBefore: config.checkinOpenHoursBefore,
+        closeMinutesAfter: config.checkinCloseMinutesAfter
+      });
 
-      const checkinOpensAt = new Date(
-        classStartsAt.getTime() - config.checkinOpenHoursBefore * 60 * 60 * 1000
-      );
-      const checkinClosesAt = new Date(
-        classStartsAt.getTime() +
-          config.checkinCloseMinutesAfter * 60 * 1000
-      );
-
-      if (serverNow < checkinOpensAt || serverNow > checkinClosesAt) {
+      if (!windowEval.allowed) {
         return reply.code(422).send({
           error: "checkin_window_closed",
+          reason: windowEval.reason,
+          message: windowEval.message,
           classSessionId,
-          serverNow: serverNow.toISOString(),
-          checkinOpensAt: checkinOpensAt.toISOString(),
-          checkinClosesAt: checkinClosesAt.toISOString(),
-          classStartsAt: classStartsAt.toISOString()
+          serverNow: windowEval.serverNow,
+          checkinOpensAt: windowEval.checkinOpensAt,
+          checkinClosesAt: windowEval.checkinClosesAt,
+          classStartsAt: windowEval.classStartsAt
         });
       }
 

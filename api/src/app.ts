@@ -1,6 +1,7 @@
 import cors from "@fastify/cors";
 import Fastify, { FastifyInstance } from "fastify";
 import { config } from "./config";
+import { adminCheckinSimulationRoutes } from "./routes/admin-checkin-simulation";
 import { authRoutes } from "./routes/auth";
 import { attendanceHistoryRoutes } from "./routes/attendances-history";
 import { checkinRoutes } from "./routes/checkins";
@@ -19,6 +20,7 @@ export function buildApp(): FastifyInstance {
 
   app.register(healthRoutes);
   app.register(authRoutes);
+  app.register(adminCheckinSimulationRoutes);
   app.register(classesRoutes);
   app.register(checkinRoutes);
   app.register(attendanceHistoryRoutes);

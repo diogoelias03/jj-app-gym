@@ -54,6 +54,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 Endpoints iniciais:
 - `GET /health`
 - `POST /api/v1/auth/login`
+- `POST /api/v1/admin/checkins/simulate-window` (admin key)
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
@@ -66,6 +67,14 @@ Fluxo de autenticacao:
 Configuracoes de janela de check-in:
 - `CHECKIN_OPEN_HOURS_BEFORE` (padrao `168`)
 - `CHECKIN_CLOSE_MINUTES_AFTER` (padrao `10`)
+- `ADMIN_API_KEY` (habilita endpoint admin de simulacao)
+
+Teste de simulacao da janela (admin):
+1. Defina `ADMIN_API_KEY` no `.env`.
+2. Chame:
+   - `POST /api/v1/admin/checkins/simulate-window`
+   - Header: `x-admin-key: <ADMIN_API_KEY>`
+   - Body: `{ "classSessionId": 1, "simulatedNow": "2026-03-30T12:00:00Z" }`
 
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.

@@ -14,5 +14,6 @@ export const config = {
   checkinOpenHoursBefore: Number(process.env.CHECKIN_OPEN_HOURS_BEFORE ?? "168"),
   checkinCloseMinutesAfter: Number(
     process.env.CHECKIN_CLOSE_MINUTES_AFTER ?? "10"
-  )
+  ),
+  adminApiKey: process.env.ADMIN_API_KEY ?? ""
 };
