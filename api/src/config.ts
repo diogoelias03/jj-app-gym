@@ -10,5 +10,9 @@ export const config = {
     "postgres://postgres:postgres@localhost:5432/jj_app_gym",
   corsOrigin: process.env.CORS_ORIGIN ?? "*",
   jwtSecret: process.env.JWT_SECRET ?? "change-this-secret",
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "8h"
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "8h",
+  checkinOpenHoursBefore: Number(process.env.CHECKIN_OPEN_HOURS_BEFORE ?? "168"),
+  checkinCloseMinutesAfter: Number(
+    process.env.CHECKIN_CLOSE_MINUTES_AFTER ?? "10"
+  )
 };
