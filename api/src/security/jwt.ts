@@ -11,7 +11,7 @@ const payloadSchema = z.object({
 
 export function signAccessToken(user: AuthenticatedUser): string {
   return jwt.sign(user, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn
+    expiresIn: config.jwtExpiresIn as jwt.SignOptions["expiresIn"]
   });
 }
 
