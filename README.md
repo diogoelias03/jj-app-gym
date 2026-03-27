@@ -91,6 +91,12 @@ Teste de simulacao da janela (admin):
      `C:\\Users\\difarias\\.git\\Docs reference\\20251220_IBJJF_Graduacao_PT.pdf`;
    - endpoint de progresso ja retorna bloco `ibjjf` com indicadores de regra.
 
+## Material de parametrizacao IBJJF
+- Matriz para preenchimento:
+  - `docs/ibjjf/ibjjf-graduation-matrix-template.csv`
+- Instrucoes de preenchimento:
+  - `docs/ibjjf/IBJJF-MATRIX-INSTRUCTIONS.md`
+
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.
 2. Fase 1: backend core + banco + autenticacao.
