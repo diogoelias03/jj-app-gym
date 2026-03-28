@@ -31,3 +31,9 @@ Preencher as regras oficiais de graduacao por faixa e categoria/perfil usando o 
    - script SQL de carga/atualizacao;
    - validações de consistência;
    - atualização dos endpoints para usar o recorte por perfil/categoria.
+
+## Status atual
+- Conversao para SQL oficial concluida:
+  - `api/db/migrations/20260327_ibjjf_profile_criteria_official.sql`
+- Script de validacao concluido:
+  - `api/db/validation/ibjjf_profile_criteria_validation.sql`

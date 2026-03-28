@@ -90,6 +90,32 @@ create table if not exists ibjjf_belt_criteria (
   unique (belt_id)
 );
 
+create table if not exists ibjjf_profiles (
+  code text primary key,
+  name text not null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists ibjjf_profile_belt_criteria (
+  id bigserial primary key,
+  profile_code text not null references ibjjf_profiles(code),
+  belt_current_id bigint not null references belts(id),
+  belt_next_id bigint not null references belts(id),
+  min_time_current_belt_months int not null default 0 check (min_time_current_belt_months >= 0),
+  min_age_years int not null default 0 check (min_age_years >= 0),
+  requires_instructor_approval boolean not null default true,
+  source_document_version text not null,
+  source_document_path text not null,
+  source_page_or_section text,
+  notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (profile_code, belt_current_id, belt_next_id)
+);
+
+create index if not exists idx_ibjjf_profile_belt_criteria_profile
+  on ibjjf_profile_belt_criteria(profile_code);
+
 create table if not exists branch_transfer_requests (
   id bigserial primary key,
   student_id bigint not null references students(id),
