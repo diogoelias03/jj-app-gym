@@ -4,9 +4,12 @@ import { requireAuth } from "../plugins/auth";
 
 type ProgressRow = {
   student_id: string | number;
+  profile_code: string;
   current_belt_id: string | number;
   current_belt_name: string;
   current_belt_rank: number;
+  next_belt_id: string | number | null;
+  next_belt_name: string | null;
   required_classes: number | null;
   completed_classes: number;
   belt_started_at: string;
@@ -15,10 +18,6 @@ type ProgressRow = {
   ibjjf_requires_instructor_approval: boolean | null;
   ibjjf_source_document_version: string | null;
   ibjjf_source_document_path: string | null;
-};
-
-type NextBeltRow = {
-  next_belt_name: string;
 };
 
 export async function progressRoutes(app: FastifyInstance): Promise<void> {
@@ -35,10 +34,30 @@ export async function progressRoutes(app: FastifyInstance): Promise<void> {
       const result = await pool.query<ProgressRow>(
         `
         with student_ctx as (
-          select s.id as student_id, s.belt_id, s.created_at as student_created_at, b.name as current_belt_name, b.rank_order
+          select
+            s.id as student_id,
+            s.profile_code,
+            s.belt_id,
+            s.created_at as student_created_at,
+            b.name as current_belt_name,
+            b.rank_order
           from students s
           join belts b on b.id = s.belt_id
           where s.id = $1 and s.is_active = true
+        ),
+        next_belt_ctx as (
+          select
+            sc.student_id,
+            b2.id as next_belt_id,
+            b2.name as next_belt_name
+          from student_ctx sc
+          left join lateral (
+            select id, name
+            from belts
+            where rank_order > sc.rank_order
+            order by rank_order asc
+            limit 1
+          ) b2 on true
         ),
         belt_started_ctx as (
           select
@@ -64,9 +83,12 @@ export async function progressRoutes(app: FastifyInstance): Promise<void> {
         )
         select
           sc.student_id,
+          sc.profile_code,
           sc.belt_id as current_belt_id,
           sc.current_belt_name,
           sc.rank_order as current_belt_rank,
+          nbc.next_belt_id,
+          nbc.next_belt_name,
           pr.min_classes as required_classes,
           ac.completed_classes,
           bsc.belt_started_at,
@@ -78,8 +100,12 @@ export async function progressRoutes(app: FastifyInstance): Promise<void> {
         from student_ctx sc
         cross join attendance_count ac
         join belt_started_ctx bsc on bsc.student_id = sc.student_id
+        left join next_belt_ctx nbc on nbc.student_id = sc.student_id
         left join promotion_rules pr on pr.belt_id = sc.belt_id and pr.active = true
-        left join ibjjf_belt_criteria ic on ic.belt_id = sc.belt_id
+        left join ibjjf_profile_belt_criteria ic
+          on ic.profile_code = sc.profile_code
+         and ic.belt_current_id = sc.belt_id
+         and ic.belt_next_id = nbc.next_belt_id
         `,
         [request.user.studentId]
       );
@@ -89,17 +115,6 @@ export async function progressRoutes(app: FastifyInstance): Promise<void> {
       }
 
       const data = result.rows[0];
-
-      const nextBelt = await pool.query<NextBeltRow>(
-        `
-        select b2.name as next_belt_name
-        from belts b2
-        where b2.rank_order > $1
-        order by b2.rank_order asc
-        limit 1
-        `,
-        [data.current_belt_rank]
-      );
 
       const studentId = Number(data.student_id);
       const requiredClasses = data.required_classes ?? 0;
@@ -121,14 +136,16 @@ export async function progressRoutes(app: FastifyInstance): Promise<void> {
 
       return reply.send({
         studentId,
+        profileCode: data.profile_code,
         currentBelt: data.current_belt_name,
-        nextBelt: nextBelt.rows[0]?.next_belt_name ?? null,
+        nextBelt: data.next_belt_name,
         completedClasses,
         requiredClasses,
         remainingClasses,
         progressPercentage,
         ibjjf: {
           currentBeltId: Number(data.current_belt_id),
+          nextBeltId: data.next_belt_id ? Number(data.next_belt_id) : null,
           sourceDocumentVersion: data.ibjjf_source_document_version,
           sourceDocumentPath: data.ibjjf_source_document_path,
           minTimeCurrentBeltMonths: ibjjfMinMonths,

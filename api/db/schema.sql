@@ -96,6 +96,43 @@ create table if not exists ibjjf_profiles (
   created_at timestamptz not null default now()
 );
 
+insert into ibjjf_profiles (code, name)
+values
+  ('adult_male', 'Adulto Masculino'),
+  ('adult_female', 'Adulto Feminino'),
+  ('juvenil', 'Juvenil'),
+  ('master_male', 'Master Masculino'),
+  ('master_female', 'Master Feminino')
+on conflict (code) do nothing;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'students'
+      and column_name = 'profile_code'
+  ) then
+    alter table students
+      add column profile_code text not null default 'adult_male';
+  end if;
+end $$;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'fk_students_profile_code'
+  ) then
+    alter table students
+      add constraint fk_students_profile_code
+      foreign key (profile_code)
+      references ibjjf_profiles(code);
+  end if;
+end $$;
+
 create table if not exists ibjjf_profile_belt_criteria (
   id bigserial primary key,
   profile_code text not null references ibjjf_profiles(code),

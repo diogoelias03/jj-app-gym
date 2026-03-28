@@ -18,14 +18,15 @@ values
   ('Professor Carlos', 'carlos@jjappgym.dev', 1)
 on conflict (email) do nothing;
 
-insert into students (full_name, email, password_hash, branch_id, belt_id)
+insert into students (full_name, email, password_hash, branch_id, belt_id, profile_code)
 values
   (
     'Aluno Demo',
     'aluno@jjappgym.dev',
     crypt('123456', gen_salt('bf')),
     1,
-    1
+    1,
+    'adult_male'
   )
 on conflict (email) do nothing;
 
