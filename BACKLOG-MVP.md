@@ -75,6 +75,14 @@ Criterios de aceite:
 - Filtros por filial, faixa e data.
 - Lista mostra horario, professor e vagas.
 
+### US-016 (P0) - Tag de categoria definida pelo admin na criacao da aula
+Como admin, quero definir uma tag de categoria na aula para orientar melhor os alunos na visualizacao da agenda.
+
+Criterios de aceite:
+- Na criacao da aula, admin escolhe uma categoria valida.
+- Categorias validas: fundamentos, tecnica, rola, drill, condicionamento.
+- Aluno visualiza a categoria na listagem de aulas.
+
 ### US-007 (P0) - Check-in de aula
 Como aluno, quero marcar presenca para registrar participacao.
 
@@ -90,6 +98,14 @@ Criterios de aceite:
 - Historico ordenado por data.
 - Filtro por periodo.
 - Total de aulas concluidas por periodo.
+
+### US-017 (P2) - Filtro opcional de aulas por categoria (V3/V4)
+Como aluno, quero filtrar aulas por categoria quando eu quiser uma busca mais refinada.
+
+Criterios de aceite:
+- Filtro de categoria e opcional na agenda.
+- Nao bloqueia fluxo principal de selecao/check-in do aluno.
+- Pode ser ativado por feature flag em versoes futuras.
 
 ## Epico 4 - Graduacao e progresso
 

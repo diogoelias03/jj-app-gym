@@ -57,6 +57,7 @@ Endpoints iniciais:
 - `POST /api/v1/admin/checkins/simulate-window` (admin key)
 - `GET /api/v1/admin/branch-transfers/requests` (admin key)
 - `POST /api/v1/admin/branch-transfers/requests/:requestId/decision` (admin key)
+- `POST /api/v1/admin/classes` (admin key)
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
@@ -68,14 +69,16 @@ Fluxo de autenticacao:
 1. Chame `POST /api/v1/auth/login` com `email` e `password`.
 2. Use `access_token` retornado no header `Authorization: Bearer <token>`.
 
-Filtro de categorias na agenda:
-1. `GET /api/v1/classes?classCategory=fundamentos`
+Tag de categoria da aula (MVP):
+1. O admin define `classCategory` ao criar a aula.
 2. Categorias suportadas:
    - `fundamentos`
    - `tecnica`
    - `rola`
    - `drill`
    - `condicionamento`
+3. O aluno visualiza a tag na agenda da aula.
+4. Filtro de aulas por categoria fica para V3/V4.
 
 Observacao de progresso IBJJF:
 1. O endpoint `/api/v1/progress` aplica criterio oficial por `profile_code` do aluno.

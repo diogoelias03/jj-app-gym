@@ -17,10 +17,10 @@ Objetivo: consolidar o core operacional e liberar UX forte para uso real.
 - Esforco: Medio
 - Motivo: acelera operacao em aula e reduz fraude/erro de presenca.
 
-2. Filtro de aulas por categoria (tecnica, rola, etc.)
+2. Tag de categoria na criacao da aula (admin)
 - Impacto: Alto
 - Esforco: Baixo
-- Motivo: melhora descoberta da aula sem mexer em infraestrutura pesada.
+- Motivo: melhora entendimento da agenda sem forcar o aluno a usar filtro.
 
 3. Metas do aluno (baseline simples)
 - Impacto: Medio
@@ -103,13 +103,18 @@ Objetivo: ampliar ecossistema e novas linhas de receita/engajamento.
 - Esforco: Medio
 - Risco: variacoes por dispositivo/plataforma.
 
+6. Filtro de aulas por categoria (opcional para aluno)
+- Impacto: Medio
+- Esforco: Baixo
+- Risco: pode aumentar complexidade da UX sem necessidade no MVP.
+
 ## Mix final (o que entra em cada onda)
-- MVP+: QR check-in, categoria de aula, metas, feedback, visual de progresso, reforco de seguranca.
+- MVP+: QR check-in, tag de categoria na aula, metas, feedback, visual de progresso, reforco de seguranca.
 - V2: notificacoes, mensageria, area do aluno, servicos/parceiros, relatorios gerenciais, 2FA.
-- V3: comunidade, social sharing, pagamentos/clube, shop, biometria.
+- V3: comunidade, social sharing, pagamentos/clube, shop, biometria, filtro opcional por categoria.
 
 ## Corte recomendado para execucao imediata (primeiro sprint do MVP+)
-1. Categoria de aula (baixo esforco, alto impacto).
+1. Tag de categoria na criacao da aula (baixo esforco, alto impacto).
 2. QR check-in.
 3. Feedback do instrutor.
 4. Barra de progresso no app.
