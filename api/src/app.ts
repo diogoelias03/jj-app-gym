@@ -3,6 +3,7 @@ import Fastify, { FastifyInstance } from "fastify";
 import { config } from "./config";
 import { adminBranchTransferRoutes } from "./routes/admin-branch-transfers";
 import { adminClassesRoutes } from "./routes/admin-classes";
+import { adminCheckinQrRoutes } from "./routes/admin-checkin-qr";
 import { adminCheckinSimulationRoutes } from "./routes/admin-checkin-simulation";
 import { authRoutes } from "./routes/auth";
 import { attendanceHistoryRoutes } from "./routes/attendances-history";
@@ -24,6 +25,7 @@ export function buildApp(): FastifyInstance {
   app.register(healthRoutes);
   app.register(authRoutes);
   app.register(adminCheckinSimulationRoutes);
+  app.register(adminCheckinQrRoutes);
   app.register(adminBranchTransferRoutes);
   app.register(adminClassesRoutes);
   app.register(classesRoutes);

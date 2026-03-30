@@ -55,11 +55,13 @@ Endpoints iniciais:
 - `GET /health`
 - `POST /api/v1/auth/login`
 - `POST /api/v1/admin/checkins/simulate-window` (admin key)
+- `POST /api/v1/admin/checkins/qr-token` (admin key)
 - `GET /api/v1/admin/branch-transfers/requests` (admin key)
 - `POST /api/v1/admin/branch-transfers/requests/:requestId/decision` (admin key)
 - `POST /api/v1/admin/classes` (admin key)
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
+- `POST /api/v1/checkins/qr` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
 - `GET /api/v1/progress` (autenticado)
 - `POST /api/v1/branch-transfers/requests` (autenticado)
@@ -88,6 +90,7 @@ Configuracoes de janela de check-in:
 - `CHECKIN_OPEN_HOURS_BEFORE` (padrao `168`)
 - `CHECKIN_CLOSE_MINUTES_AFTER` (padrao `10`)
 - `ADMIN_API_KEY` (habilita endpoint admin de simulacao)
+- `QR_CHECKIN_TOKEN_EXPIRES_MINUTES` (padrao `15`)
 
 Teste de simulacao da janela (admin):
 1. Defina `ADMIN_API_KEY` no `.env`.
@@ -95,6 +98,16 @@ Teste de simulacao da janela (admin):
    - `POST /api/v1/admin/checkins/simulate-window`
    - Header: `x-admin-key: <ADMIN_API_KEY>`
    - Body: `{ "classSessionId": 1, "simulatedNow": "2026-03-30T12:00:00Z" }`
+
+Fluxo QR check-in (MVP+):
+1. Admin gera token QR:
+   - `POST /api/v1/admin/checkins/qr-token`
+   - Header: `x-admin-key: <ADMIN_API_KEY>`
+   - Body: `{ "classSessionId": 1 }`
+2. App do aluno envia token:
+   - `POST /api/v1/checkins/qr`
+   - Header: `Authorization: Bearer <access_token>`
+   - Body: `{ "qrToken": "<token_gerado>" }`
 
 ## Decisoes de negocio aplicadas
 1. Troca de filial:

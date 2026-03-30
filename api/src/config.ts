@@ -15,5 +15,8 @@ export const config = {
   checkinCloseMinutesAfter: Number(
     process.env.CHECKIN_CLOSE_MINUTES_AFTER ?? "10"
   ),
-  adminApiKey: process.env.ADMIN_API_KEY ?? ""
+  adminApiKey: process.env.ADMIN_API_KEY ?? "",
+  qrCheckinTokenExpiresMinutes: Number(
+    process.env.QR_CHECKIN_TOKEN_EXPIRES_MINUTES ?? "15"
+  )
 };

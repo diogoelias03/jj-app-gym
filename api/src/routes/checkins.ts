@@ -1,12 +1,15 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { config } from "../config";
 import { getDbPool } from "../db";
 import { requireAuth } from "../plugins/auth";
-import { evaluateCheckinWindow } from "../services/checkin-window";
+import { performCheckin } from "../services/checkin";
 
 const bodySchema = z.object({
   classSessionId: z.number().int().positive()
+});
+
+const qrBodySchema = z.object({
+  qrToken: z.string().min(10).max(256)
 });
 
 export async function checkinRoutes(app: FastifyInstance): Promise<void> {
@@ -29,57 +32,67 @@ export async function checkinRoutes(app: FastifyInstance): Promise<void> {
       const { classSessionId } = parsedBody.data;
       const { studentId } = request.user;
       const pool = getDbPool();
-      const classSessionResult = await pool.query<{
-        starts_at: string;
-        server_now: string;
-      }>(
-        `
-        select starts_at, now() as server_now
-        from class_sessions
-        where id = $1
-        `,
-        [classSessionId]
-      );
-
-      if (classSessionResult.rowCount === 0) {
-        return reply.code(404).send({ error: "class_session_not_found" });
+      const result = await performCheckin({ pool, studentId, classSessionId });
+      if (!result.ok) {
+        return reply.code(result.statusCode).send(result.payload);
       }
 
-      const classSession = classSessionResult.rows[0];
-      const classStartsAt = new Date(classSession.starts_at);
-      const serverNow = new Date(classSession.server_now);
-      const windowEval = evaluateCheckinWindow({
-        classStartsAt,
-        serverNow,
-        openHoursBefore: config.checkinOpenHoursBefore,
-        closeMinutesAfter: config.checkinCloseMinutesAfter
-      });
+      return reply.code(201).send(result.data);
+    }
+  );
 
-      if (!windowEval.allowed) {
-        return reply.code(422).send({
-          error: "checkin_window_closed",
-          reason: windowEval.reason,
-          message: windowEval.message,
-          classSessionId,
-          serverNow: windowEval.serverNow,
-          checkinOpensAt: windowEval.checkinOpensAt,
-          checkinClosesAt: windowEval.checkinClosesAt,
-          classStartsAt: windowEval.classStartsAt
+  app.post(
+    "/api/v1/checkins/qr",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      const parsedBody = qrBodySchema.safeParse(request.body);
+      if (!parsedBody.success) {
+        return reply.code(400).send({
+          error: "invalid_payload",
+          details: parsedBody.error.flatten()
         });
       }
 
-      const result = await pool.query(
+      if (!request.user) {
+        return reply.code(401).send({ error: "unauthorized" });
+      }
+
+      const { qrToken } = parsedBody.data;
+      const { studentId } = request.user;
+      const pool = getDbPool();
+
+      const tokenResult = await pool.query<{
+        class_session_id: string;
+      }>(
         `
-        insert into attendances (class_session_id, student_id, status)
-        values ($1, $2, 'present')
-        on conflict (class_session_id, student_id)
-        do update set status = excluded.status, checked_in_at = now()
-        returning id, class_session_id, student_id, status, checked_in_at
+        select class_session_id
+        from class_checkin_qr_tokens
+        where token = $1
+          and revoked_at is null
+          and expires_at >= now()
+        order by created_at desc
+        limit 1
         `,
-        [classSessionId, studentId]
+        [qrToken]
       );
 
-      return reply.code(201).send(result.rows[0]);
+      if (tokenResult.rowCount === 0) {
+        return reply.code(422).send({
+          error: "invalid_or_expired_qr_token",
+          message: "O QR code informado e invalido ou expirou."
+        });
+      }
+
+      const classSessionId = Number(tokenResult.rows[0].class_session_id);
+      const result = await performCheckin({ pool, studentId, classSessionId });
+      if (!result.ok) {
+        return reply.code(result.statusCode).send(result.payload);
+      }
+
+      return reply.code(201).send({
+        ...result.data,
+        checkinMethod: "qr"
+      });
     }
   );
 }
