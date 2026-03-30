@@ -11,7 +11,9 @@ import { branchTransferRoutes } from "./routes/branch-transfers";
 import { checkinRoutes } from "./routes/checkins";
 import { classesRoutes } from "./routes/classes";
 import { healthRoutes } from "./routes/health";
+import { instructorFeedbackRoutes } from "./routes/instructor-feedback";
 import { progressRoutes } from "./routes/progress";
+import { studentGoalsRoutes } from "./routes/student-goals";
 
 export function buildApp(): FastifyInstance {
   const app = Fastify({
@@ -33,6 +35,8 @@ export function buildApp(): FastifyInstance {
   app.register(attendanceHistoryRoutes);
   app.register(progressRoutes);
   app.register(branchTransferRoutes);
+  app.register(studentGoalsRoutes);
+  app.register(instructorFeedbackRoutes);
 
   return app;
 }

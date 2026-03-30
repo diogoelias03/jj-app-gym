@@ -59,11 +59,16 @@ Endpoints iniciais:
 - `GET /api/v1/admin/branch-transfers/requests` (admin key)
 - `POST /api/v1/admin/branch-transfers/requests/:requestId/decision` (admin key)
 - `POST /api/v1/admin/classes` (admin key)
+- `POST /api/v1/admin/instructor-feedback` (admin key)
 - `GET /api/v1/classes` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
 - `POST /api/v1/checkins/qr` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
 - `GET /api/v1/progress` (autenticado)
+- `GET /api/v1/goals` (autenticado)
+- `POST /api/v1/goals` (autenticado)
+- `PATCH /api/v1/goals/:goalId` (autenticado)
+- `GET /api/v1/instructor-feedback` (autenticado)
 - `POST /api/v1/branch-transfers/requests` (autenticado)
 - `GET /api/v1/branch-transfers/requests/my` (autenticado)
 
@@ -108,6 +113,15 @@ Fluxo QR check-in (MVP+):
    - `POST /api/v1/checkins/qr`
    - Header: `Authorization: Bearer <access_token>`
    - Body: `{ "qrToken": "<token_gerado>" }`
+
+Fluxo de metas do aluno (MVP+):
+1. Criar meta: `POST /api/v1/goals`
+2. Listar metas: `GET /api/v1/goals`
+3. Atualizar progresso/status: `PATCH /api/v1/goals/:goalId`
+
+Fluxo de feedback do instrutor (MVP+):
+1. Registrar feedback (admin/instrutor): `POST /api/v1/admin/instructor-feedback`
+2. Aluno consulta feedback recebido: `GET /api/v1/instructor-feedback`
 
 ## Decisoes de negocio aplicadas
 1. Troca de filial:
