@@ -6,6 +6,9 @@ import { requireAuth } from "../plugins/auth";
 const querySchema = z.object({
   branchId: z.coerce.number().int().positive().optional(),
   beltId: z.coerce.number().int().positive().optional(),
+  classCategory: z
+    .enum(["fundamentos", "tecnica", "rola", "drill", "condicionamento"])
+    .optional(),
   fromDate: z.string().optional(),
   toDate: z.string().optional()
 });
@@ -25,6 +28,7 @@ export async function classesRoutes(app: FastifyInstance): Promise<void> {
 
       const branchId = parsedQuery.data.branchId ?? request.user?.branchId;
       const beltId = parsedQuery.data.beltId;
+      const classCategory = parsedQuery.data.classCategory;
       const fromDate = parsedQuery.data.fromDate;
       const toDate = parsedQuery.data.toDate;
 
@@ -34,6 +38,7 @@ export async function classesRoutes(app: FastifyInstance): Promise<void> {
         select
           cs.id,
           cs.title,
+          cs.class_category,
           cs.starts_at,
           cs.ends_at,
           cs.capacity,
@@ -46,11 +51,18 @@ export async function classesRoutes(app: FastifyInstance): Promise<void> {
         join instructors i on i.id = cs.instructor_id
         where ($1::int is null or cs.branch_id = $1)
           and ($2::int is null or cs.belt_id = $2)
-          and ($3::timestamptz is null or cs.starts_at >= $3)
-          and ($4::timestamptz is null or cs.starts_at <= $4)
+          and ($3::text is null or cs.class_category = $3)
+          and ($4::timestamptz is null or cs.starts_at >= $4)
+          and ($5::timestamptz is null or cs.starts_at <= $5)
         order by cs.starts_at asc
         `,
-        [branchId ?? null, beltId ?? null, fromDate ?? null, toDate ?? null]
+        [
+          branchId ?? null,
+          beltId ?? null,
+          classCategory ?? null,
+          fromDate ?? null,
+          toDate ?? null
+        ]
       );
 
       return reply.send({ items: result.rows });

@@ -41,11 +41,15 @@ create table if not exists class_sessions (
   belt_id bigint not null references belts(id),
   instructor_id bigint not null references instructors(id),
   title text not null,
+  class_category text not null default 'fundamentos',
   starts_at timestamptz not null,
   ends_at timestamptz not null,
   capacity int not null default 30,
   created_at timestamptz not null default now(),
-  constraint class_session_time_check check (ends_at > starts_at)
+  constraint class_session_time_check check (ends_at > starts_at),
+  constraint class_session_category_check check (
+    class_category in ('fundamentos', 'tecnica', 'rola', 'drill', 'condicionamento')
+  )
 );
 
 create table if not exists attendances (

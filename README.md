@@ -68,6 +68,15 @@ Fluxo de autenticacao:
 1. Chame `POST /api/v1/auth/login` com `email` e `password`.
 2. Use `access_token` retornado no header `Authorization: Bearer <token>`.
 
+Filtro de categorias na agenda:
+1. `GET /api/v1/classes?classCategory=fundamentos`
+2. Categorias suportadas:
+   - `fundamentos`
+   - `tecnica`
+   - `rola`
+   - `drill`
+   - `condicionamento`
+
 Observacao de progresso IBJJF:
 1. O endpoint `/api/v1/progress` aplica criterio oficial por `profile_code` do aluno.
 2. Exemplo de `profile_code`: `adult_male`, `adult_female`, `juvenil`, `master_male`, `master_female`.

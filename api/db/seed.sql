@@ -30,10 +30,10 @@ values
   )
 on conflict (email) do nothing;
 
-insert into class_sessions (branch_id, belt_id, instructor_id, title, starts_at, ends_at, capacity)
+insert into class_sessions (branch_id, belt_id, instructor_id, title, class_category, starts_at, ends_at, capacity)
 values
-  (1, 1, 1, 'Fundamentos Branca', now() + interval '1 day', now() + interval '1 day 1 hour', 25),
-  (1, 2, 1, 'Tecnicas Azul', now() + interval '2 day', now() + interval '2 day 1 hour', 20)
+  (1, 1, 1, 'Fundamentos Branca', 'fundamentos', now() + interval '1 day', now() + interval '1 day 1 hour', 25),
+  (1, 2, 1, 'Tecnicas Azul', 'tecnica', now() + interval '2 day', now() + interval '2 day 1 hour', 20)
 on conflict do nothing;
 
 insert into promotion_rules (belt_id, min_classes, active)
