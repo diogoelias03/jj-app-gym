@@ -61,6 +61,7 @@ Endpoints iniciais:
 - `POST /api/v1/admin/classes` (admin key)
 - `POST /api/v1/admin/instructor-feedback` (admin key)
 - `GET /api/v1/classes` (autenticado)
+- `GET /api/v1/dashboard` (autenticado)
 - `POST /api/v1/checkins` (autenticado)
 - `POST /api/v1/checkins/qr` (autenticado)
 - `GET /api/v1/attendances/history` (autenticado)
@@ -118,6 +119,13 @@ Fluxo de metas do aluno (MVP+):
 1. Criar meta: `POST /api/v1/goals`
 2. Listar metas: `GET /api/v1/goals`
 3. Atualizar progresso/status: `PATCH /api/v1/goals/:goalId`
+
+Resumo de dashboard (MVP+):
+1. `GET /api/v1/dashboard` retorna em uma chamada:
+   - proxima aula da filial do aluno;
+   - progresso consolidado de graduacao;
+   - resumo/top metas ativas;
+   - feedback recente com media de nota.
 
 Fluxo de feedback do instrutor (MVP+):
 1. Registrar feedback (admin/instrutor): `POST /api/v1/admin/instructor-feedback`

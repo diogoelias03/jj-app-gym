@@ -10,6 +10,7 @@ import { attendanceHistoryRoutes } from "./routes/attendances-history";
 import { branchTransferRoutes } from "./routes/branch-transfers";
 import { checkinRoutes } from "./routes/checkins";
 import { classesRoutes } from "./routes/classes";
+import { dashboardRoutes } from "./routes/dashboard";
 import { healthRoutes } from "./routes/health";
 import { instructorFeedbackRoutes } from "./routes/instructor-feedback";
 import { progressRoutes } from "./routes/progress";
@@ -31,6 +32,7 @@ export function buildApp(): FastifyInstance {
   app.register(adminBranchTransferRoutes);
   app.register(adminClassesRoutes);
   app.register(classesRoutes);
+  app.register(dashboardRoutes);
   app.register(checkinRoutes);
   app.register(attendanceHistoryRoutes);
   app.register(progressRoutes);
