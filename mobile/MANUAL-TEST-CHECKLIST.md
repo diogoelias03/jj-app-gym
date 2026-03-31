@@ -62,6 +62,11 @@
 - Fechar app e abrir novamente.
 - Resultado esperado: app solicita biometria para restaurar sessao.
 
+13. Telemetria interna
+- Ir para aba `Telemetria`.
+- Navegar entre abas e executar ao menos 1 check-in/meta.
+- Resultado esperado: contadores de evento aumentam e aparecem eventos recentes.
+
 ## Evidencias recomendadas
 1. Print da tela de login.
 2. Print de cada aba principal.

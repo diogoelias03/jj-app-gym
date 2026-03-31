@@ -12,6 +12,7 @@ import { CheckinScreen } from "./src/screens/CheckinScreen";
 import { GoalsScreen } from "./src/screens/GoalsScreen";
 import { FeedbackScreen } from "./src/screens/FeedbackScreen";
 import { SecurityScreen } from "./src/screens/SecurityScreen";
+import { TelemetryScreen } from "./src/screens/TelemetryScreen";
 
 type MainTabsParamList = {
   Dashboard: undefined;
@@ -21,11 +22,14 @@ type MainTabsParamList = {
   Metas: undefined;
   Feedback: undefined;
   Seguranca: undefined;
+  Telemetria: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
 function MainTabs() {
+  const { trackEvent } = useAppContext();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -34,13 +38,50 @@ function MainTabs() {
         tabBarLabelStyle: { fontSize: 12, fontWeight: "600" }
       }}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Aulas" component={ClassesScreen} />
-      <Tab.Screen name="Progresso" component={ProgressScreen} />
-      <Tab.Screen name="Checkin" component={CheckinScreen} />
-      <Tab.Screen name="Metas" component={GoalsScreen} />
-      <Tab.Screen name="Feedback" component={FeedbackScreen} />
-      <Tab.Screen name="Seguranca" component={SecurityScreen} />
+      <Tab.Screen
+        name="Dashboard"
+        component={DashboardScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Dashboard" }) }}
+      />
+      <Tab.Screen
+        name="Aulas"
+        component={ClassesScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Aulas" }) }}
+      />
+      <Tab.Screen
+        name="Progresso"
+        component={ProgressScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Progresso" }) }}
+      />
+      <Tab.Screen
+        name="Checkin"
+        component={CheckinScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Checkin" }) }}
+      />
+      <Tab.Screen
+        name="Metas"
+        component={GoalsScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Metas" }) }}
+      />
+      <Tab.Screen
+        name="Feedback"
+        component={FeedbackScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Feedback" }) }}
+      />
+      <Tab.Screen
+        name="Seguranca"
+        component={SecurityScreen}
+        listeners={{ tabPress: () => void trackEvent("tab_open", { tab: "Seguranca" }) }}
+      />
+      <Tab.Screen
+        name="Telemetria"
+        component={TelemetryScreen}
+        listeners={{
+          tabPress: () => {
+            void trackEvent("tab_open", { tab: "Telemetria" });
+          }
+        }}
+      />
     </Tab.Navigator>
   );
 }

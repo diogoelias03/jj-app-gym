@@ -32,6 +32,7 @@ npm run start
 - Login (`/api/v1/auth/login`)
 - Sessao persistida com armazenamento seguro (`expo-secure-store`)
 - Biometria opcional para restaurar sessao (digital/face)
+- Telemetria interna de uso (eventos de app, tabs e acoes principais)
 - Dashboard (`/api/v1/dashboard`)
 - Lista de aulas com `class_category` (`/api/v1/classes`)
 - Progresso IBJJF por `profile_code` (`/api/v1/progress`)
@@ -41,3 +42,6 @@ npm run start
 ## Validacao manual
 - Roteiro de QA manual:
   - `MANUAL-TEST-CHECKLIST.md`
+- Coleta de evidencias E2E:
+  - `E2E-EVIDENCE-GUIDE.md`
+  - `scripts/e2e-evidence.ps1`

@@ -4,6 +4,14 @@ import * as SecureStore from "expo-secure-store";
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import {
+  clearTelemetryEvents,
+  getTelemetryEvents,
+  getTelemetrySummary,
+  TelemetryEvent,
+  TelemetrySummary,
+  trackTelemetryEvent
+} from "../analytics/telemetry";
+import {
   apiRequest,
   AuthResponse,
   CheckinResponse,
@@ -47,6 +55,14 @@ type AppContextValue = {
   biometricAvailable: boolean;
   biometricEnabled: boolean;
   toggleBiometric: (nextValue: boolean) => Promise<void>;
+  telemetrySummary: TelemetrySummary | null;
+  telemetryEvents: TelemetryEvent[];
+  refreshTelemetry: () => Promise<void>;
+  clearTelemetry: () => Promise<void>;
+  trackEvent: (
+    name: string,
+    metadata?: Record<string, string | number | boolean | null>
+  ) => Promise<void>;
   handleLogin: () => Promise<void>;
   handleLogout: () => Promise<void>;
   loadAll: () => Promise<void>;
@@ -68,6 +84,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [lastMessage, setLastMessage] = useState<string | null>(null);
   const [biometricEnabled, setBiometricEnabled] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [telemetrySummary, setTelemetrySummary] = useState<TelemetrySummary | null>(null);
+  const [telemetryEvents, setTelemetryEvents] = useState<TelemetryEvent[]>([]);
 
   const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
   const [classes, setClasses] = useState<ClassSession[]>([]);
@@ -92,6 +110,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     void bootstrapSession();
   }, []);
 
+  async function trackEvent(
+    name: string,
+    metadata?: Record<string, string | number | boolean | null>
+  ): Promise<void> {
+    await trackTelemetryEvent(name, metadata);
+    await refreshTelemetry();
+  }
+
+  async function refreshTelemetry(): Promise<void> {
+    const [summary, events] = await Promise.all([
+      getTelemetrySummary(),
+      getTelemetryEvents(20)
+    ]);
+    setTelemetrySummary(summary);
+    setTelemetryEvents(events);
+  }
+
+  async function clearTelemetry(): Promise<void> {
+    await clearTelemetryEvents();
+    await refreshTelemetry();
+    setLastMessage("Telemetria limpa.");
+  }
+
   async function bootstrapSession(): Promise<void> {
     try {
       const [savedToken, savedBiometricFlag] = await Promise.all([
@@ -108,6 +149,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const effectiveBiometricEnabled = persistedBiometricEnabled && isAvailable;
       setBiometricEnabled(effectiveBiometricEnabled);
 
+      await refreshTelemetry();
+      await trackEvent("app_boot");
+
       if (!savedToken) {
         return;
       }
@@ -119,6 +163,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!allowed) {
           await SecureStore.deleteItemAsync(TOKEN_KEY);
           setLastMessage("Sessao bloqueada. Faca login novamente.");
+          await trackEvent("session_restore_denied_biometric");
           return;
         }
       }
@@ -126,8 +171,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setToken(savedToken);
       await loadAllInternal(savedToken);
       setLastMessage("Sessao restaurada automaticamente.");
+      await trackEvent("session_restored");
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("app_boot_error");
     } finally {
       setIsBootstrapping(false);
     }
@@ -158,12 +205,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setBiometricEnabled(false);
         await AsyncStorage.setItem(BIOMETRIC_ENABLED_KEY, "false");
         setLastMessage("Biometria indisponivel no dispositivo.");
+        await trackEvent("biometric_enable_unavailable");
         return;
       }
 
       const allowed = await authenticateWithBiometrics("Confirme biometria para ativar.");
       if (!allowed) {
         setLastMessage("Ativacao de biometria cancelada.");
+        await trackEvent("biometric_enable_cancelled");
         return;
       }
     }
@@ -171,6 +220,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setBiometricEnabled(nextValue);
     await AsyncStorage.setItem(BIOMETRIC_ENABLED_KEY, nextValue ? "true" : "false");
     setLastMessage(nextValue ? "Biometria ativada." : "Biometria desativada.");
+    await trackEvent(nextValue ? "biometric_enabled" : "biometric_disabled");
   }
 
   async function loadAllInternal(authToken: string): Promise<void> {
@@ -194,8 +244,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setGoals(goalsData.items ?? []);
       setFeedbackList(feedbackData.items ?? []);
       setLastMessage("Dados atualizados.");
+      await trackEvent("data_refresh_success");
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("data_refresh_error");
     } finally {
       setIsRefreshing(false);
     }
@@ -213,8 +265,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       await SecureStore.setItemAsync(TOKEN_KEY, response.access_token);
       setLastMessage("Login realizado com sucesso.");
       await loadAllInternal(response.access_token);
+      await trackEvent("login_success");
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("login_error");
     } finally {
       setIsLoggingIn(false);
     }
@@ -247,8 +301,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
           response.checked_in_at
         ).toLocaleString("pt-BR")}`
       );
+      await trackEvent("checkin_success_button", { classSessionId });
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("checkin_error_button", { classSessionId });
     }
   }
 
@@ -271,8 +327,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
           response.checked_in_at
         ).toLocaleString("pt-BR")}`
       );
+      await trackEvent("checkin_success_qr");
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("checkin_error_qr");
     }
   }
 
@@ -305,8 +363,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setGoalUnit("");
       setLastMessage("Meta criada com sucesso.");
       await loadGoals(token);
+      await trackEvent("goal_create_success");
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("goal_create_error");
     }
   }
 
@@ -331,8 +391,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
       setLastMessage("Meta atualizada.");
       await loadGoals(token);
+      await trackEvent("goal_update_success", { goalId: goal.id });
     } catch (error) {
       setLastMessage(getFriendlyError(error));
+      await trackEvent("goal_update_error", { goalId: goal.id });
     }
   }
 
@@ -352,6 +414,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setQrToken("");
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     setLastMessage("Sessao encerrada.");
+    await trackEvent("logout");
   }
 
   const value: AppContextValue = {
@@ -383,6 +446,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     biometricAvailable,
     biometricEnabled,
     toggleBiometric,
+    telemetrySummary,
+    telemetryEvents,
+    refreshTelemetry,
+    clearTelemetry,
+    trackEvent,
     handleLogin,
     handleLogout,
     loadAll,
