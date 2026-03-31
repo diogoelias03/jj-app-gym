@@ -104,6 +104,28 @@ export type CheckinResponse = {
   checkinMethod?: "qr";
 };
 
+export type Goal = {
+  id: number;
+  title: string;
+  description: string | null;
+  target_value: number | null;
+  current_value: number;
+  unit: string | null;
+  status: "active" | "completed" | "archived";
+  target_date: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InstructorFeedback = {
+  id: number;
+  rating: number;
+  feedback_text: string;
+  created_at: string;
+  class_session_id: number | null;
+  instructor_name: string;
+};
+
 export async function apiRequest<T>(
   path: string,
   options: RequestOptions = {}
@@ -127,4 +149,3 @@ export async function apiRequest<T>(
 
   return (await response.json()) as T;
 }
-
