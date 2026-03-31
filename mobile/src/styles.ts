@@ -54,6 +54,12 @@ export const appStyles = StyleSheet.create({
     flexDirection: "row",
     gap: 8
   },
+  rowBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 8
+  },
   flex1: {
     flex: 1
   },
@@ -118,4 +124,3 @@ export const appStyles = StyleSheet.create({
     padding: 10
   }
 });
-

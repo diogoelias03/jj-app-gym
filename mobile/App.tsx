@@ -11,6 +11,7 @@ import { ProgressScreen } from "./src/screens/ProgressScreen";
 import { CheckinScreen } from "./src/screens/CheckinScreen";
 import { GoalsScreen } from "./src/screens/GoalsScreen";
 import { FeedbackScreen } from "./src/screens/FeedbackScreen";
+import { SecurityScreen } from "./src/screens/SecurityScreen";
 
 type MainTabsParamList = {
   Dashboard: undefined;
@@ -19,6 +20,7 @@ type MainTabsParamList = {
   Checkin: undefined;
   Metas: undefined;
   Feedback: undefined;
+  Seguranca: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
@@ -38,6 +40,7 @@ function MainTabs() {
       <Tab.Screen name="Checkin" component={CheckinScreen} />
       <Tab.Screen name="Metas" component={GoalsScreen} />
       <Tab.Screen name="Feedback" component={FeedbackScreen} />
+      <Tab.Screen name="Seguranca" component={SecurityScreen} />
     </Tab.Navigator>
   );
 }

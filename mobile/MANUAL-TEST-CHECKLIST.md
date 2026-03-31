@@ -56,9 +56,14 @@
 - Tocar `Sair`.
 - Resultado esperado: voltar para tela de login e limpar sessao local.
 
+12. Seguranca biometrica
+- Ir para aba `Seguranca`.
+- Ativar biometria.
+- Fechar app e abrir novamente.
+- Resultado esperado: app solicita biometria para restaurar sessao.
+
 ## Evidencias recomendadas
 1. Print da tela de login.
 2. Print de cada aba principal.
 3. Print de sucesso e erro de check-in.
 4. Print de criacao/atualizacao de meta.
-

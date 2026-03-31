@@ -30,6 +30,8 @@ npm run start
 
 ## Fluxo MVP implementado
 - Login (`/api/v1/auth/login`)
+- Sessao persistida com armazenamento seguro (`expo-secure-store`)
+- Biometria opcional para restaurar sessao (digital/face)
 - Dashboard (`/api/v1/dashboard`)
 - Lista de aulas com `class_category` (`/api/v1/classes`)
 - Progresso IBJJF por `profile_code` (`/api/v1/progress`)

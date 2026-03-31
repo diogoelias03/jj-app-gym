@@ -1,4 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as LocalAuthentication from "expo-local-authentication";
+import * as SecureStore from "expo-secure-store";
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import {
@@ -13,7 +15,8 @@ import {
 } from "../api/client";
 import { getFriendlyError } from "../utils/error";
 
-const TOKEN_KEY = "jj_app_access_token";
+const TOKEN_KEY = "jj_app_access_token_secure";
+const BIOMETRIC_ENABLED_KEY = "jj_app_biometric_enabled";
 
 type AppContextValue = {
   email: string;
@@ -41,6 +44,9 @@ type AppContextValue = {
   goalUnit: string;
   setGoalUnit: (value: string) => void;
   classIdsHint: string;
+  biometricAvailable: boolean;
+  biometricEnabled: boolean;
+  toggleBiometric: (nextValue: boolean) => Promise<void>;
   handleLogin: () => Promise<void>;
   handleLogout: () => Promise<void>;
   loadAll: () => Promise<void>;
@@ -60,6 +66,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastMessage, setLastMessage] = useState<string | null>(null);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
 
   const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
   const [classes, setClasses] = useState<ClassSession[]>([]);
@@ -86,10 +94,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   async function bootstrapSession(): Promise<void> {
     try {
-      const savedToken = await AsyncStorage.getItem(TOKEN_KEY);
+      const [savedToken, savedBiometricFlag] = await Promise.all([
+        SecureStore.getItemAsync(TOKEN_KEY),
+        AsyncStorage.getItem(BIOMETRIC_ENABLED_KEY)
+      ]);
+
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+      const isAvailable = hasHardware && isEnrolled;
+      setBiometricAvailable(isAvailable);
+
+      const persistedBiometricEnabled = savedBiometricFlag === "true";
+      const effectiveBiometricEnabled = persistedBiometricEnabled && isAvailable;
+      setBiometricEnabled(effectiveBiometricEnabled);
+
       if (!savedToken) {
         return;
       }
+
+      if (effectiveBiometricEnabled) {
+        const allowed = await authenticateWithBiometrics(
+          "Use biometria para restaurar sua sessao."
+        );
+        if (!allowed) {
+          await SecureStore.deleteItemAsync(TOKEN_KEY);
+          setLastMessage("Sessao bloqueada. Faca login novamente.");
+          return;
+        }
+      }
+
       setToken(savedToken);
       await loadAllInternal(savedToken);
       setLastMessage("Sessao restaurada automaticamente.");
@@ -98,6 +131,46 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsBootstrapping(false);
     }
+  }
+
+  async function authenticateWithBiometrics(promptMessage: string): Promise<boolean> {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+    if (!hasHardware || !isEnrolled) {
+      return false;
+    }
+
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage,
+      fallbackLabel: "Usar senha do dispositivo",
+      cancelLabel: "Cancelar"
+    });
+
+    return result.success;
+  }
+
+  async function toggleBiometric(nextValue: boolean): Promise<void> {
+    if (nextValue) {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+      if (!hasHardware || !isEnrolled) {
+        setBiometricAvailable(false);
+        setBiometricEnabled(false);
+        await AsyncStorage.setItem(BIOMETRIC_ENABLED_KEY, "false");
+        setLastMessage("Biometria indisponivel no dispositivo.");
+        return;
+      }
+
+      const allowed = await authenticateWithBiometrics("Confirme biometria para ativar.");
+      if (!allowed) {
+        setLastMessage("Ativacao de biometria cancelada.");
+        return;
+      }
+    }
+
+    setBiometricEnabled(nextValue);
+    await AsyncStorage.setItem(BIOMETRIC_ENABLED_KEY, nextValue ? "true" : "false");
+    setLastMessage(nextValue ? "Biometria ativada." : "Biometria desativada.");
   }
 
   async function loadAllInternal(authToken: string): Promise<void> {
@@ -137,7 +210,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email: email.trim(), password })
       });
       setToken(response.access_token);
-      await AsyncStorage.setItem(TOKEN_KEY, response.access_token);
+      await SecureStore.setItemAsync(TOKEN_KEY, response.access_token);
       setLastMessage("Login realizado com sucesso.");
       await loadAllInternal(response.access_token);
     } catch (error) {
@@ -277,7 +350,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFeedbackList([]);
     setCheckinClassId("");
     setQrToken("");
-    await AsyncStorage.removeItem(TOKEN_KEY);
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
     setLastMessage("Sessao encerrada.");
   }
 
@@ -307,6 +380,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     goalUnit,
     setGoalUnit,
     classIdsHint,
+    biometricAvailable,
+    biometricEnabled,
+    toggleBiometric,
     handleLogin,
     handleLogout,
     loadAll,
