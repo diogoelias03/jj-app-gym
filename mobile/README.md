@@ -36,3 +36,6 @@ npm run start
 - Check-in por botao (`/api/v1/checkins`)
 - Check-in por QR token (`/api/v1/checkins/qr`)
 
+## Validacao manual
+- Roteiro de QA manual:
+  - `MANUAL-TEST-CHECKLIST.md`
