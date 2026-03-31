@@ -50,6 +50,8 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
    - `psql "$DATABASE_URL" -f db/schema.sql`
    - `psql "$DATABASE_URL" -f db/seed.sql`
 8. Inicie a API com `npm run dev`.
+9. Opcional: execute o smoke test MVP com:
+   - `powershell -ExecutionPolicy Bypass -File api/scripts/mvp-smoke.ps1`
 
 Endpoints iniciais:
 - `GET /health`
@@ -151,6 +153,9 @@ Fluxo de feedback do instrutor (MVP+):
 ## Roadmap de produto
 - Planejamento em 3 ondas (MVP+, V2, V3):
   - `ROADMAP-3-WAVES.md`
+
+## Checklist de prontidao MVP
+- `MVP-READINESS-CHECKLIST.md`
 
 ## Roadmap resumido
 1. Fase 0: definicao de produto e fundacao de engenharia.
