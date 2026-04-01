@@ -45,6 +45,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `CONTRIBUTING.md`: guia de contribuicao
 - `RELEASE-CHECKLIST.md`: checklist operacional de release
 - `RELEASE-RC-RUNBOOK.md`: playbook de go/no-go para release candidate
+- `scripts/rc-preflight.ps1`: preflight de release candidate em comando unico
 
 ## API bootstrap
 1. Instale Node.js 20+.

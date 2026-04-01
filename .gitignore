@@ -9,3 +9,8 @@ override.tf.json
 *_override.tf.json
 terraform.tfvars
 .secrets/
+
+# Local personal/temporary artifacts
+itau_extrato_012026.csv
+release/reports/
+mobile/evidence/

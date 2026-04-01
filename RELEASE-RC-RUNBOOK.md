@@ -15,6 +15,11 @@ Executar uma rodada objetiva de go/no-go antes de promover o MVP para release.
 powershell -ExecutionPolicy Bypass -File .\scripts\release-go-nogo.ps1 -RunChecks
 ```
 
+Opcional (recomendado): usar preflight consolidado:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\rc-preflight.ps1 -RunChecks
+```
+
 2. Executar checklist funcional:
 - `mobile/MANUAL-TEST-CHECKLIST.md`
 - `mobile/E2E-EVIDENCE-GUIDE.md`
@@ -32,6 +37,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\release-go-nogo.ps1 -RunCheck
 powershell -ExecutionPolicy Bypass -File .\scripts\checkpoint-sync.ps1 -Message "checkpoint: rc mvp go" -TagSuffix "rc-mvp-go" -Push
 ```
 
+Alternativa em comando unico (somente se decisao for GO):
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\rc-preflight.ps1 -RunChecks -CreateCheckpoint -TagSuffix "rc-mvp-go" -Push
+```
+
 ## Criterios minimos para GO
 - API build/typecheck ok.
 - Mobile typecheck ok.
@@ -43,4 +53,3 @@ powershell -ExecutionPolicy Bypass -File .\scripts\checkpoint-sync.ps1 -Message 
 - Relatorio em `release/reports/`.
 - Evidencias de QA em `mobile/evidence/`.
 - Tag de checkpoint para retomada.
-
