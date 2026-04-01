@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Perguntas de produto
+    url: https://github.com/diogoelias03/jj-app-gym/discussions
+    about: Use discussions para duvidas gerais e alinhamentos.
+

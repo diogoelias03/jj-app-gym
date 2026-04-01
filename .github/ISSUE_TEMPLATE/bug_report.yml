@@ -1,0 +1,63 @@
+name: Bug report
+description: Reportar falha de comportamento no app/API.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumo
+      description: O que aconteceu?
+      placeholder: Descreva o problema em 2-3 linhas.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      placeholder: |
+        1. Ir para...
+        2. Clicar em...
+        3. Observar...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado atual
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidade
+      options:
+        - Critica
+        - Alta
+        - Media
+        - Baixa
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Commit/Tag testado
+      placeholder: ex. checkpoint-2026-04-01-...
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidencias
+      description: Links/caminhos para prints, videos ou logs.
+

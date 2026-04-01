@@ -1,0 +1,53 @@
+name: Feature request
+description: Sugerir melhoria de produto/engenharia.
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema de negocio
+      description: Qual dor a funcionalidade resolve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Descreva a funcionalidade sugerida.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceite
+      placeholder: |
+        - [ ] criterio 1
+        - [ ] criterio 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impacto esperado
+      options:
+        - Alto
+        - Medio
+        - Baixo
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Esforco estimado
+      options:
+        - Alto
+        - Medio
+        - Baixo
+    validations:
+      required: true
+

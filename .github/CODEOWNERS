@@ -1,0 +1,13 @@
+# Core owners
+* @diogoelias03
+
+# API
+/api/ @diogoelias03
+
+# Mobile
+/mobile/ @diogoelias03
+
+# Infra
+/*.tf @diogoelias03
+/scripts/ @diogoelias03
+

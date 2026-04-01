@@ -39,6 +39,11 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `BACKLOG-MVP.md`: backlog priorizado do produto
 - `api/`: esqueleto inicial da API Node.js + PostgreSQL
 - `.github/workflows/ci.yml`: pipeline CI (API typecheck/build + mobile typecheck)
+- `.github/PULL_REQUEST_TEMPLATE.md`: template oficial de PR
+- `.github/ISSUE_TEMPLATE/`: templates de bug/feature
+- `.github/CODEOWNERS`: ownership de revisao
+- `CONTRIBUTING.md`: guia de contribuicao
+- `RELEASE-CHECKLIST.md`: checklist operacional de release
 
 ## API bootstrap
 1. Instale Node.js 20+.
