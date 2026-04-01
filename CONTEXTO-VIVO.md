@@ -47,7 +47,10 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - issue templates (bug/feature),
   - CODEOWNERS,
   - `CONTRIBUTING.md`,
-  - `RELEASE-CHECKLIST.md`.
+  - `RELEASE-CHECKLIST.md`,
+  - `RELEASE-RC-RUNBOOK.md`,
+  - `scripts/release-go-nogo.ps1`,
+  - `scripts/rc-preflight.ps1`.
 
 ## Decisoes de negocio consolidadas
 - Categoria de aula no MVP: tag informativa criada pelo admin (`fundamentos`, `tecnica`, `rola`, `drill`, `condicionamento`), sem filtro de aluno agora (filtro fica para V3/V4).
@@ -60,10 +63,20 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - `checkpoint-2026-03-31-mvpplus-backend-ready`
   - `checkpoint-2026-03-31-1635-2026-03-31-mobile-telemetry-e2e`
   - `checkpoint-2026-04-01-1026-2026-04-01-ci-pipeline`
-- Ultimo commit local: `861ae9a` (`chore(repo): add contribution and release governance templates`).
+  - `checkpoint-2026-04-01-1449-2026-04-01-governance-context`
+  - `checkpoint-2026-04-01-rc-runbook-go-nogo`
+  - `checkpoint-2026-04-01-1705-2026-04-01-rc-preflight-go`
+- Ultimo commit sincronizado: `a733d0c` (`chore(release): ignore local artifacts and add rc preflight command`).
+
+## Estado de release candidate
+- Preflight RC executado com checks tecnicos e decisao preliminar `GO`.
+- Relatorio mais recente gerado em:
+  - `release/reports/go-nogo-20260401-170413.md` (artefato local).
+- Pipeline de checkpoint RC executada com tag de retomada.
 
 ## Pendencia imediata
-- Sincronizar o commit local `861ae9a` para o remoto (push + opcional tag de checkpoint).
+- Nenhuma pendencia tecnica critica no repositorio principal.
+- Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.

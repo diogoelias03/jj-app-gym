@@ -37,7 +37,8 @@ $reportPath = Join-Path $reportDir "go-nogo-$timestamp.md"
 
 $branch = (git -C $repoRoot rev-parse --abbrev-ref HEAD).Trim()
 $head = (git -C $repoRoot log -1 --oneline).Trim()
-$statusShort = (git -C $repoRoot status --short).Trim()
+$statusOutput = git -C $repoRoot status --short
+$statusShort = (($statusOutput | Out-String).Trim())
 $workingTreeClean = [string]::IsNullOrWhiteSpace($statusShort)
 
 $results = @()
@@ -112,4 +113,3 @@ else {
 Set-Content -Path $reportPath -Value ($lines -join "`r`n") -Encoding UTF8
 Write-Output "Relatorio gerado: $reportPath"
 Write-Output "Decisao preliminar: $decision"
-
