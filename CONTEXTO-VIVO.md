@@ -1,0 +1,71 @@
+# Contexto Vivo - JJ App Gym
+
+Atualizado em: 2026-04-01 (America/Sao_Paulo)
+
+## Objetivo do projeto
+- Transformar a ideia do app de academia de jiu-jitsu em produto real.
+- Entregar MVP funcional com:
+  - check-in (botao + QR),
+  - grade de aulas,
+  - progresso de graduacao,
+  - metas do aluno,
+  - feedback do instrutor,
+  - seguranca de sessao.
+
+## Stack e arquitetura definidas
+- Mobile: React Native (Expo) + TypeScript.
+- Backend: Node.js + Fastify + TypeScript.
+- Banco: PostgreSQL.
+- Cloud alvo: OCI.
+- Infra: Terraform.
+- Repositorio: `https://github.com/diogoelias03/jj-app-gym.git`.
+
+## Estado atual do produto
+- Backend MVP+ pronto e validado:
+  - auth JWT,
+  - dashboard,
+  - classes com `classCategory`,
+  - check-in por botao e QR,
+  - historico de presencas,
+  - progresso IBJJF por `profile_code`,
+  - metas do aluno,
+  - feedback do instrutor,
+  - solicitacao/aprovacao de troca de filial com trilha para BI.
+- Mobile MVP avancado:
+  - app modular com abas/telas separadas,
+  - sessao persistida com `expo-secure-store`,
+  - biometria opcional para restaurar sessao,
+  - telemetria interna (eventos + resumo + tela `Telemetria`),
+  - checklist/manual de testes e geracao de evidencias E2E.
+
+## Governanca e qualidade (repo)
+- CI GitHub Actions ativo:
+  - API: `npm ci`, `typecheck`, `build`.
+  - Mobile: `npm ci`, `typecheck`.
+- Templates e processos adicionados:
+  - PR template,
+  - issue templates (bug/feature),
+  - CODEOWNERS,
+  - `CONTRIBUTING.md`,
+  - `RELEASE-CHECKLIST.md`.
+
+## Decisoes de negocio consolidadas
+- Categoria de aula no MVP: tag informativa criada pelo admin (`fundamentos`, `tecnica`, `rola`, `drill`, `condicionamento`), sem filtro de aluno agora (filtro fica para V3/V4).
+- Troca de filial: aluno solicita; admin aprova/rejeita; eventos ficam registrados para BI.
+- Progresso por faixa: regra oficial IBJJF ligada ao `profile_code` do aluno.
+
+## Git/GitHub - checkpoints relevantes
+- Checkpoints ja sincronizados:
+  - `checkpoint-2026-03-27-profile-progress`
+  - `checkpoint-2026-03-31-mvpplus-backend-ready`
+  - `checkpoint-2026-03-31-1635-2026-03-31-mobile-telemetry-e2e`
+  - `checkpoint-2026-04-01-1026-2026-04-01-ci-pipeline`
+- Ultimo commit local: `861ae9a` (`chore(repo): add contribution and release governance templates`).
+
+## Pendencia imediata
+- Sincronizar o commit local `861ae9a` para o remoto (push + opcional tag de checkpoint).
+
+## Regra de manutencao deste resumo
+- Atualizar este arquivo ao fim de cada bloco.
+- Atualizar sempre que houver a trigger:
+  - "atualiza o resumo de contexto"
