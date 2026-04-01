@@ -66,13 +66,16 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - `checkpoint-2026-04-01-1449-2026-04-01-governance-context`
   - `checkpoint-2026-04-01-rc-runbook-go-nogo`
   - `checkpoint-2026-04-01-1705-2026-04-01-rc-preflight-go`
+  - `checkpoint-2026-04-01-2044-2026-04-01-rc-final-go`
 - Ultimo commit sincronizado: `a733d0c` (`chore(release): ignore local artifacts and add rc preflight command`).
 
 ## Estado de release candidate
 - Preflight RC executado com checks tecnicos e decisao preliminar `GO`.
 - Relatorio mais recente gerado em:
-  - `release/reports/go-nogo-20260401-170413.md` (artefato local).
+  - `release/reports/go-nogo-20260401-204144.md` (artefato local).
 - Pipeline de checkpoint RC executada com tag de retomada.
+- Pacote minimo de evidencias versionado:
+  - `release/RC-FINAL-GO-2026-04-01.md`.
 
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
