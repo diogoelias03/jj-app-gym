@@ -38,6 +38,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `PROJECT-BLUEPRINT-OCI-POSTGRES.md`: plano macro do projeto
 - `BACKLOG-MVP.md`: backlog priorizado do produto
 - `api/`: esqueleto inicial da API Node.js + PostgreSQL
+- `.github/workflows/ci.yml`: pipeline CI (API typecheck/build + mobile typecheck)
 
 ## API bootstrap
 1. Instale Node.js 20+.
