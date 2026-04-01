@@ -44,6 +44,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `.github/CODEOWNERS`: ownership de revisao
 - `CONTRIBUTING.md`: guia de contribuicao
 - `RELEASE-CHECKLIST.md`: checklist operacional de release
+- `RELEASE-RC-RUNBOOK.md`: playbook de go/no-go para release candidate
 
 ## API bootstrap
 1. Instale Node.js 20+.

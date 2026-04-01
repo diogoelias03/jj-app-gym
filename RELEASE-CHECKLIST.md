@@ -4,6 +4,7 @@
 - [ ] Backlog da release congelado
 - [ ] Itens de alto risco mapeados
 - [ ] Stakeholders alinhados com escopo
+- [ ] Relatorio de prontidao gerado (`scripts/release-go-nogo.ps1 -RunChecks`)
 
 ## 2) Qualidade tecnica
 - [ ] CI verde em `main`
@@ -25,9 +26,9 @@
 - [ ] Reuniao rapida de go/no-go realizada
 - [ ] Rollback definido e testado
 - [ ] Tag de checkpoint criada
+- [ ] Runbook seguido (`RELEASE-RC-RUNBOOK.md`)
 
 ## 6) Pos-release
 - [ ] Monitoramento inicial (primeiras 24h)
 - [ ] Registro de incidentes e aprendizados
 - [ ] Atualizacao do roadmap
-
