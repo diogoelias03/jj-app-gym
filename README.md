@@ -38,6 +38,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `PROJECT-BLUEPRINT-OCI-POSTGRES.md`: plano macro do projeto
 - `BACKLOG-MVP.md`: backlog priorizado do produto
 - `CRONOGRAMA-GERAL.md`: cronograma executivo consolidado
+- `docs/JANELA-CONTEXTO-CONSOLIDADA-2026-04-02.md`: contexto inicial consolidado e atualizado
 - `api/`: esqueleto inicial da API Node.js + PostgreSQL
 - `.github/workflows/ci.yml`: pipeline CI (API typecheck/build + mobile typecheck)
 - `.github/PULL_REQUEST_TEMPLATE.md`: template oficial de PR
@@ -49,6 +50,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `scripts/rc-preflight.ps1`: preflight de release candidate em comando unico
 - `release/GO-LIVE-RUNBOOK.md`: procedimento de go-live
 - `release/POST-RELEASE-MONITORING-24H.md`: plano de monitoramento pos-release
+- `release/GO-LIVE-READINESS-2026-04-02.md`: status de prontidao da janela atual
 - `scripts/go-live-start.ps1`: cria log padrao de execucao de go-live
 
 ## API bootstrap

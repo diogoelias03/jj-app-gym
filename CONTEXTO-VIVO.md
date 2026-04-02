@@ -89,6 +89,14 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - Go-live controlado: em andamento,
   - Estabilizacao: proxima fase.
 
+## Bloco atual (2026-04-02)
+- Documento inicial consolidado e alinhado ao estado real:
+  - `docs/JANELA-CONTEXTO-CONSOLIDADA-2026-04-02.md`.
+- Novo status de prontidao para janela de lancamento:
+  - `release/GO-LIVE-READINESS-2026-04-02.md`.
+- Check tecnico do bloco:
+  - `release-go-nogo.ps1 -RunChecks` com decisao preliminar `GO`.
+
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
 - Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.
