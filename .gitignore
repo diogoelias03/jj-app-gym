@@ -13,4 +13,5 @@ terraform.tfvars
 # Local personal/temporary artifacts
 itau_extrato_012026.csv
 release/reports/
+release/executions/
 mobile/evidence/

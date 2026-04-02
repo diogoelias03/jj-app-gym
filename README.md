@@ -46,6 +46,9 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `RELEASE-CHECKLIST.md`: checklist operacional de release
 - `RELEASE-RC-RUNBOOK.md`: playbook de go/no-go para release candidate
 - `scripts/rc-preflight.ps1`: preflight de release candidate em comando unico
+- `release/GO-LIVE-RUNBOOK.md`: procedimento de go-live
+- `release/POST-RELEASE-MONITORING-24H.md`: plano de monitoramento pos-release
+- `scripts/go-live-start.ps1`: cria log padrao de execucao de go-live
 
 ## API bootstrap
 1. Instale Node.js 20+.

@@ -76,6 +76,10 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
 - Pipeline de checkpoint RC executada com tag de retomada.
 - Pacote minimo de evidencias versionado:
   - `release/RC-FINAL-GO-2026-04-01.md`.
+- Kit operacional de go-live adicionado:
+  - `release/GO-LIVE-RUNBOOK.md`,
+  - `release/POST-RELEASE-MONITORING-24H.md`,
+  - `scripts/go-live-start.ps1`.
 
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
