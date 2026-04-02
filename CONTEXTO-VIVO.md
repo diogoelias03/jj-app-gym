@@ -81,6 +81,14 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - `release/POST-RELEASE-MONITORING-24H.md`,
   - `scripts/go-live-start.ps1`.
 
+## Cronograma geral atualizado
+- Cronograma executivo consolidado em:
+  - `CRONOGRAMA-GERAL.md`.
+- Estado de fase:
+  - RC final: concluido (GO),
+  - Go-live controlado: em andamento,
+  - Estabilizacao: proxima fase.
+
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
 - Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.

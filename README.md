@@ -37,6 +37,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `README-LAB.md`: detalhes do laboratorio de infraestrutura
 - `PROJECT-BLUEPRINT-OCI-POSTGRES.md`: plano macro do projeto
 - `BACKLOG-MVP.md`: backlog priorizado do produto
+- `CRONOGRAMA-GERAL.md`: cronograma executivo consolidado
 - `api/`: esqueleto inicial da API Node.js + PostgreSQL
 - `.github/workflows/ci.yml`: pipeline CI (API typecheck/build + mobile typecheck)
 - `.github/PULL_REQUEST_TEMPLATE.md`: template oficial de PR

@@ -1,5 +1,15 @@
 # Roadmap 3 Ondas - App Gym Schedule
 
+## Status atual (2026-04-01)
+- Onda 1 (MVP+): **concluida tecnicamente** e em fase de go-live controlado.
+- Onda 2 (V2): **planejada** para iniciar apos estabilizacao pos-go-live.
+- Onda 3 (V3): **planejada** para etapa de diferenciacao e monetizacao.
+
+## Janela estimada por onda
+- Onda 1 (MVP+): 2026-03-20 a 2026-04-05
+- Onda 2 (V2): 2026-04-21 a 2026-06-15
+- Onda 3 (V3): 2026-06-16 em diante
+
 ## Criterio de priorizacao
 - Impacto: valor para aluno/academia e diferenciacao de produto.
 - Esforco: complexidade tecnica, dependencias e risco.
@@ -41,6 +51,9 @@ Objetivo: consolidar o core operacional e liberar UX forte para uso real.
 - Impacto: Medio
 - Esforco: Baixo
 - Motivo: reduz risco operacional antes de crescer base de usuarios.
+
+Status da onda:
+- concluida com entregas de backend + mobile + seguranca + telemetria + release readiness.
 
 ## Onda 2 - V2 (escala funcional)
 Objetivo: elevar retencao, comunicacao e operacao comercial.
