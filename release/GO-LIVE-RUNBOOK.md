@@ -28,6 +28,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\go-live-start.ps1 -Owner "Seu
 2. Executar smoke rapido:
 - API health/login/classes/checkin/progress;
 - app mobile login/dashboard/checkin/metas.
+- comando recomendado (API):
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\go-live-smoke.ps1 -BaseUrl "http://127.0.0.1:3000" -AdminKey "local-admin-key"
+```
 
 3. Decisao de liberacao:
 - se sem bloqueadores: `GO`;
@@ -42,4 +46,3 @@ powershell -ExecutionPolicy Bypass -File .\scripts\go-live-start.ps1 -Owner "Seu
 1. Reverter para ultimo checkpoint estavel.
 2. Comunicar rollback e impacto.
 3. Abrir plano de correcao e nova janela.
-

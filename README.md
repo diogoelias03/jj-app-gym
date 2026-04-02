@@ -52,6 +52,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `release/POST-RELEASE-MONITORING-24H.md`: plano de monitoramento pos-release
 - `release/GO-LIVE-READINESS-2026-04-02.md`: status de prontidao da janela atual
 - `scripts/go-live-start.ps1`: cria log padrao de execucao de go-live
+- `scripts/go-live-smoke.ps1`: smoke test de API para decisao de go-live
 
 ## API bootstrap
 1. Instale Node.js 20+.

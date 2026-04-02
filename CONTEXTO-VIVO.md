@@ -96,6 +96,8 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - `release/GO-LIVE-READINESS-2026-04-02.md`.
 - Check tecnico do bloco:
   - `release-go-nogo.ps1 -RunChecks` com decisao preliminar `GO`.
+- Automacao adicional de go-live adicionada:
+  - `scripts/go-live-smoke.ps1` para smoke test da API com relatorio.
 
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
