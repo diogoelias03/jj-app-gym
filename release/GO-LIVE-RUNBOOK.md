@@ -41,6 +41,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\go-live-smoke.ps1 -BaseUrl "h
 1. Monitorar erros e tempo de resposta.
 2. Registrar incidentes no log de execucao.
 3. Comunicar status final da janela.
+4. Encerrar log de execucao:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\go-live-close.ps1 -LogPath ".\release\executions\go-live-YYYYMMDD-HHMMSS.md" -FinalStatus "GO" -Summary "Janela concluida sem bloqueadores."
+```
+5. Usar templates de comunicacao:
+- `release/GO-LIVE-COMMUNICATION-TEMPLATES.md`
 
 ## Rollback
 1. Reverter para ultimo checkpoint estavel.

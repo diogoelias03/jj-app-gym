@@ -99,6 +99,12 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
 - Automacao adicional de go-live adicionada:
   - `scripts/go-live-smoke.ps1` para smoke test da API com relatorio.
 
+## Bloco atual (2026-04-03)
+- Fechamento operacional da janela de go-live adicionado:
+  - `scripts/go-live-close.ps1`.
+- Templates de comunicacao para janela de lancamento adicionados:
+  - `release/GO-LIVE-COMMUNICATION-TEMPLATES.md`.
+
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
 - Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.
