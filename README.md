@@ -55,6 +55,7 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `scripts/go-live-start.ps1`: cria log padrao de execucao de go-live
 - `scripts/go-live-smoke.ps1`: smoke test de API para decisao de go-live
 - `scripts/go-live-close.ps1`: encerra log de go-live com status final
+- `scripts/scope-guard.ps1`: valida arquivos fora de escopo antes de sincronizar
 
 ## API bootstrap
 1. Instale Node.js 20+.

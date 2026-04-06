@@ -105,6 +105,13 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
 - Templates de comunicacao para janela de lancamento adicionados:
   - `release/GO-LIVE-COMMUNICATION-TEMPLATES.md`.
 
+## Bloco atual (2026-04-06)
+- Higiene de sincronizacao reforcada:
+  - `.gitignore` atualizado para artefatos pessoais/temporarios (`codex pessoal/`, `~$*.xlsx`).
+  - `scripts/scope-guard.ps1` adicionado para checar arquivos fora de escopo antes do push.
+- Acao combinada com usuario:
+  - remover no proximo ciclo de sincronizacao os 3 arquivos fora de escopo ja versionados.
+
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
 - Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.
