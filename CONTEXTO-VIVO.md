@@ -111,6 +111,10 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - `scripts/scope-guard.ps1` adicionado para checar arquivos fora de escopo antes do push.
 - Acao combinada com usuario:
   - remover no proximo ciclo de sincronizacao os 3 arquivos fora de escopo ja versionados.
+- Novo apoio de gestao executiva:
+  - `scripts/project-status-snapshot.ps1` para gerar snapshot em `release/reports/`.
+- Cronograma geral atualizado para refletir fase atual:
+  - `CRONOGRAMA-GERAL.md`.
 
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.

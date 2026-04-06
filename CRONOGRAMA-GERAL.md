@@ -1,10 +1,10 @@
 # Cronograma Geral - JJ App Gym
 
-Atualizado em: 2026-04-01
+Atualizado em: 2026-04-06
 
 ## Visao executiva
-- Status atual: **RC Final GO**
-- Fase atual: **Preparacao de Go-Live**
+- Status atual: **Go-Live Controlado**
+- Fase atual: **Transicao para Estabilizacao Pos-Go-Live**
 - Horizonte planejado: 12 semanas (MVP estabilizado + inicio V2)
 
 ## Linha do tempo (resumo)
@@ -32,7 +32,7 @@ Atualizado em: 2026-04-01
   - comunicacao de go-live concluida;
   - monitoramento inicial registrado.
 
-6. Fase 5 - Estabilizacao pos-go-live (Planejada)
+6. Fase 5 - Estabilizacao pos-go-live (Em preparacao)
 - Periodo alvo: 2026-04-06 a 2026-04-20
 - Objetivo: corrigir defeitos de producao e melhorar confiabilidade.
 - Entregas esperadas:
@@ -61,4 +61,3 @@ Atualizado em: 2026-04-01
 1. Usar runbook de go-live e preflight antes de cada janela.
 2. Priorizar correcoes P0/P1 na estabilizacao.
 3. Replanejar escopo V2 semanalmente com base em dados reais.
-
