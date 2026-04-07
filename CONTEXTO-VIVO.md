@@ -122,6 +122,11 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - `deploy/docker-compose.api-postgres.yml`
   - `scripts/deploy-api-local.ps1`
   - `release/DEPLOY-RUNBOOK.md`
+- Deploy OCI estruturado:
+  - workflow `.github/workflows/deploy-oci-api.yml` (build/push OCIR + rollout OKE opcional),
+  - manifests `deploy/oke/`,
+  - runbook `release/OCI-DEPLOY-RUNBOOK.md`,
+  - utilitario `scripts/prepare-kubeconfig-secret.ps1`.
 
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.

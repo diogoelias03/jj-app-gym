@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jj-gym-api
+  namespace: jj-gym
+  labels:
+    app: jj-gym-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jj-gym-api
+  template:
+    metadata:
+      labels:
+        app: jj-gym-api
+    spec:
+      containers:
+        - name: jj-gym-api
+          image: REPLACE_IMAGE
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: CORS_ORIGIN
+              value: "*"
+            - name: JWT_EXPIRES_IN
+              value: "8h"
+            - name: CHECKIN_OPEN_HOURS_BEFORE
+              value: "168"
+            - name: CHECKIN_CLOSE_MINUTES_AFTER
+              value: "10"
+            - name: QR_CHECKIN_TOKEN_EXPIRES_MINUTES
+              value: "15"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: jj-gym-api-secrets
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jj-gym-api-secrets
+                  key: JWT_SECRET
+            - name: ADMIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jj-gym-api-secrets
+                  key: ADMIN_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+

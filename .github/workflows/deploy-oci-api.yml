@@ -1,0 +1,101 @@
+name: Deploy OCI API
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollout_oke:
+        description: "Executar rollout no OKE apos publicar imagem?"
+        required: true
+        type: boolean
+        default: false
+      target_environment:
+        description: "Ambiente alvo"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: dev
+
+jobs:
+  build_publish:
+    name: Build and Publish to OCIR
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    outputs:
+      image_ref: ${{ steps.meta.outputs.image_ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image metadata
+        id: meta
+        shell: bash
+        run: |
+          IMAGE_REF="${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_NAMESPACE }}/${{ secrets.OCI_IMAGE_REPOSITORY }}:${GITHUB_SHA}"
+          echo "image_ref=$IMAGE_REF" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_REF=$IMAGE_REF" >> "$GITHUB_ENV"
+
+      - name: Login to OCIR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.OCI_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_AUTH_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_REF }}
+
+      - name: Output published image
+        run: echo "Published image => ${{ env.IMAGE_REF }}"
+
+  rollout_oke:
+    name: Rollout on OKE
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    needs: build_publish
+    if: ${{ inputs.rollout_oke == true }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.30.0
+
+      - name: Prepare kubeconfig
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "${{ secrets.OKE_KUBECONFIG_B64 }}" | base64 -d > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Ensure namespace
+        run: kubectl create namespace jj-gym --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply base manifests
+        run: kubectl apply -f deploy/oke/api-deployment.yaml -f deploy/oke/api-service.yaml
+
+      - name: Apply API secrets
+        shell: bash
+        run: |
+          kubectl -n jj-gym create secret generic jj-gym-api-secrets \
+            --from-literal=DATABASE_URL='${{ secrets.API_DATABASE_URL }}' \
+            --from-literal=JWT_SECRET='${{ secrets.API_JWT_SECRET }}' \
+            --from-literal=ADMIN_API_KEY='${{ secrets.API_ADMIN_API_KEY }}' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Set deployed image
+        run: |
+          kubectl -n jj-gym set image deployment/jj-gym-api \
+            jj-gym-api=${{ needs.build_publish.outputs.image_ref }}
+
+      - name: Wait rollout
+        run: kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=180s
+

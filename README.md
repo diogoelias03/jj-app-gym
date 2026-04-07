@@ -53,12 +53,14 @@ Aplicativo mobile para academias de jiu-jitsu com foco em presenca, agenda por f
 - `release/POST-RELEASE-MONITORING-24H.md`: plano de monitoramento pos-release
 - `release/GO-LIVE-READINESS-2026-04-02.md`: status de prontidao da janela atual
 - `release/DEPLOY-RUNBOOK.md`: deploy containerizado da API (Docker)
+- `release/OCI-DEPLOY-RUNBOOK.md`: pipeline de deploy OCI (OCIR + OKE)
 - `scripts/go-live-start.ps1`: cria log padrao de execucao de go-live
 - `scripts/go-live-smoke.ps1`: smoke test de API para decisao de go-live
 - `scripts/go-live-close.ps1`: encerra log de go-live com status final
 - `scripts/scope-guard.ps1`: valida arquivos fora de escopo antes de sincronizar
 - `scripts/project-status-snapshot.ps1`: gera snapshot executivo de status em `release/reports/`
 - `scripts/deploy-api-local.ps1`: sobe/para stack API+Postgres via Docker Compose
+- `scripts/prepare-kubeconfig-secret.ps1`: gera base64 do kubeconfig para secret do GitHub
 
 ## API bootstrap
 1. Instale Node.js 20+.
