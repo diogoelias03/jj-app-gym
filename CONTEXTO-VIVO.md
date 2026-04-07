@@ -116,6 +116,13 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
 - Cronograma geral atualizado para refletir fase atual:
   - `CRONOGRAMA-GERAL.md`.
 
+## Bloco atual (2026-04-07)
+- Deploy base da API estruturado com Docker:
+  - `api/Dockerfile`
+  - `deploy/docker-compose.api-postgres.yml`
+  - `scripts/deploy-api-local.ps1`
+  - `release/DEPLOY-RUNBOOK.md`
+
 ## Pendencia imediata
 - Nenhuma pendencia tecnica critica no repositorio principal.
 - Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.

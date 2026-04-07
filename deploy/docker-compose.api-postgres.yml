@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: jj-gym-db
+    environment:
+      POSTGRES_DB: jj_app_gym
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_jj_gym:/var/lib/postgresql/data
+      - ../api/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../api/db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d jj_app_gym"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: jj-gym-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://postgres:postgres@db:5432/jj_app_gym
+      CORS_ORIGIN: "*"
+      JWT_SECRET: change-this-secret
+      JWT_EXPIRES_IN: 8h
+      CHECKIN_OPEN_HOURS_BEFORE: 168
+      CHECKIN_CLOSE_MINUTES_AFTER: 10
+      ADMIN_API_KEY: local-admin-key
+      QR_CHECKIN_TOKEN_EXPIRES_MINUTES: 15
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  pgdata_jj_gym:
+
