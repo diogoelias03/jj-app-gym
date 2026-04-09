@@ -22,18 +22,14 @@ jobs:
     name: Build and Publish to OCIR
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_environment }}
-    outputs:
-      image_ref: ${{ steps.meta.outputs.image_ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set image metadata
-        id: meta
         shell: bash
         run: |
           IMAGE_REF="${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_NAMESPACE }}/${{ secrets.OCI_IMAGE_REPOSITORY }}:${GITHUB_SHA}"
-          echo "image_ref=$IMAGE_REF" >> "$GITHUB_OUTPUT"
           echo "IMAGE_REF=$IMAGE_REF" >> "$GITHUB_ENV"
 
       - name: Login to OCIR
@@ -113,9 +109,11 @@ jobs:
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Set deployed image
+        shell: bash
         run: |
+          IMAGE_REF="${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_NAMESPACE }}/${{ secrets.OCI_IMAGE_REPOSITORY }}:${GITHUB_SHA}"
           kubectl -n jj-gym set image deployment/jj-gym-api \
-            jj-gym-api=${{ needs.build_publish.outputs.image_ref }}
+            jj-gym-api="$IMAGE_REF"
 
       - name: Wait rollout
         run: kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=180s
