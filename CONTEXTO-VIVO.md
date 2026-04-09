@@ -1,6 +1,6 @@
 # Contexto Vivo - JJ App Gym
 
-Atualizado em: 2026-04-01 (America/Sao_Paulo)
+Atualizado em: 2026-04-09 (America/Sao_Paulo)
 
 ## Objetivo do projeto
 - Transformar a ideia do app de academia de jiu-jitsu em produto real.
@@ -128,9 +128,23 @@ Atualizado em: 2026-04-01 (America/Sao_Paulo)
   - runbook `release/OCI-DEPLOY-RUNBOOK.md`,
   - utilitario `scripts/prepare-kubeconfig-secret.ps1`.
 
+## Bloco atual (2026-04-09)
+- Deploy OCI destravado e validado:
+  - secrets OCI completos em `dev`/`prod` (OCIR + OKE kubeconfig + credenciais OCI API key),
+  - workflow `Deploy OCI API` ajustado para autenticar no OKE com OCI CLI,
+  - manifest OKE com `imagePullSecrets` para OCIR privado,
+  - aplicacao do deployment com imagem real (sem `REPLACE_IMAGE`) no pipeline,
+  - etapa de debug de rollout melhorada (describe + logs de todos os pods).
+- Infra OKE estabilizada para agendamento:
+  - node pool publico escalado para 1 no (`ACTIVE`) via OCI CLI.
+- Status final do workflow:
+  - run `24197083033` com `Build and Publish to OCIR` e `Rollout on OKE` em `success`.
+- Ajuste de disponibilidade da API:
+  - endpoint `GET /health/live` adicionado para probes de liveness/readiness sem dependencia de banco.
+
 ## Pendencia imediata
-- Nenhuma pendencia tecnica critica no repositorio principal.
-- Proximo passo recomendado: rodada final de QA funcional com evidencia completa antes do go-live.
+- Configurar `API_DATABASE_URL` do ambiente `dev` para um PostgreSQL acessivel pelo OKE.
+- Enquanto o `DATABASE_URL` apontar para `localhost`, o endpoint `GET /health` (deep check) continuara retornando `500`.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
