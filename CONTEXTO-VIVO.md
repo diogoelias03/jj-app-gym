@@ -1,6 +1,6 @@
 # Contexto Vivo - JJ App Gym
 
-Atualizado em: 2026-04-09 (America/Sao_Paulo) - bloco em execucao
+Atualizado em: 2026-04-09 (America/Sao_Paulo)
 
 ## Objetivo do projeto
 - Transformar a ideia do app de academia de jiu-jitsu em produto real.
@@ -149,6 +149,16 @@ Atualizado em: 2026-04-09 (America/Sao_Paulo) - bloco em execucao
 ## Trigger de atualizacao (2026-04-09)
 - Usuario solicitou: "atualiza o resumo de contexto" e seguir com proximo bloco.
 - Proximo bloco ativo: fechar conectividade de banco no ambiente `dev` para remover `500` no `GET /health`.
+
+## Bloco concluido (2026-04-09)
+- Banco `dev` conectado no OKE:
+  - PostgreSQL interno adicionado para ambiente de desenvolvimento (`deploy/oke/postgres-deployment.yaml` e `deploy/oke/postgres-service.yaml`).
+  - Pipeline aplica schema + seed automaticamente em `dev`.
+  - Secret `API_POSTGRES_PASSWORD` configurado em `dev` e `prod` (GitHub Actions).
+- Pipeline OCI atualizado:
+  - `rollout_oke` agora garante banco, prepara `DATABASE_URL` por ambiente e sobe API com seed no `dev`.
+- Validacao:
+  - Run de sucesso: `Deploy OCI API` #`24208548136` (build + rollout verdes).
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
