@@ -69,6 +69,27 @@ jobs:
         with:
           version: v1.30.0
 
+      - name: Setup OCI CLI
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install oci-cli
+
+      - name: Configure OCI CLI
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.oci"
+          cat > "$HOME/.oci/config" <<EOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=${{ secrets.OCI_REGION }}
+          key_file=$HOME/.oci/oci_api_key.pem
+          EOF
+          printf '%s' "${{ secrets.OCI_PRIVATE_KEY_PEM }}" > "$HOME/.oci/oci_api_key.pem"
+          chmod 600 "$HOME/.oci/config" "$HOME/.oci/oci_api_key.pem"
+
       - name: Prepare kubeconfig
         shell: bash
         run: |
@@ -98,4 +119,3 @@ jobs:
 
       - name: Wait rollout
         run: kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=180s
-
