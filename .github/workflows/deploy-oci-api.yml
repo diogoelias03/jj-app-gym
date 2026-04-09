@@ -107,7 +107,11 @@ jobs:
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Apply base manifests
-        run: kubectl apply -f deploy/oke/api-deployment.yaml -f deploy/oke/api-service.yaml
+        shell: bash
+        run: |
+          IMAGE_REF="${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_NAMESPACE }}/${{ secrets.OCI_IMAGE_REPOSITORY }}:${GITHUB_SHA}"
+          sed "s|REPLACE_IMAGE|$IMAGE_REF|g" deploy/oke/api-deployment.yaml | kubectl apply -f -
+          kubectl apply -f deploy/oke/api-service.yaml
 
       - name: Apply API secrets
         shell: bash
@@ -118,13 +122,6 @@ jobs:
             --from-literal=ADMIN_API_KEY='${{ secrets.API_ADMIN_API_KEY }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Set deployed image
-        shell: bash
-        run: |
-          IMAGE_REF="${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_NAMESPACE }}/${{ secrets.OCI_IMAGE_REPOSITORY }}:${GITHUB_SHA}"
-          kubectl -n jj-gym set image deployment/jj-gym-api \
-            jj-gym-api="$IMAGE_REF"
-
       - name: Wait rollout
         run: kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=300s
 
@@ -134,9 +131,9 @@ jobs:
         run: |
           kubectl -n jj-gym get deploy,rs,pods,svc -o wide || true
           kubectl -n jj-gym describe deployment jj-gym-api || true
-          POD="$(kubectl -n jj-gym get pods -l app=jj-gym-api -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)"
-          if [ -n "$POD" ]; then
+          for POD in $(kubectl -n jj-gym get pods -l app=jj-gym-api -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || true); do
+            echo "### POD: $POD"
             kubectl -n jj-gym describe pod "$POD" || true
             kubectl -n jj-gym logs "$POD" --tail=200 || true
             kubectl -n jj-gym logs "$POD" --previous --tail=200 || true
-          fi
+          done
