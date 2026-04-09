@@ -96,6 +96,16 @@ jobs:
       - name: Ensure namespace
         run: kubectl create namespace jj-gym --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Ensure image pull secret
+        shell: bash
+        run: |
+          kubectl -n jj-gym create secret docker-registry ocir-secret \
+            --docker-server='${{ secrets.OCI_REGISTRY }}' \
+            --docker-username='${{ secrets.OCI_USERNAME }}' \
+            --docker-password='${{ secrets.OCI_AUTH_TOKEN }}' \
+            --docker-email='noreply@jjappgym.dev' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Apply base manifests
         run: kubectl apply -f deploy/oke/api-deployment.yaml -f deploy/oke/api-service.yaml
 
@@ -116,4 +126,17 @@ jobs:
             jj-gym-api="$IMAGE_REF"
 
       - name: Wait rollout
-        run: kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=180s
+        run: kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=300s
+
+      - name: Debug rollout (on failure)
+        if: ${{ failure() }}
+        shell: bash
+        run: |
+          kubectl -n jj-gym get deploy,rs,pods,svc -o wide || true
+          kubectl -n jj-gym describe deployment jj-gym-api || true
+          POD="$(kubectl -n jj-gym get pods -l app=jj-gym-api -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)"
+          if [ -n "$POD" ]; then
+            kubectl -n jj-gym describe pod "$POD" || true
+            kubectl -n jj-gym logs "$POD" --tail=200 || true
+            kubectl -n jj-gym logs "$POD" --previous --tail=200 || true
+          fi

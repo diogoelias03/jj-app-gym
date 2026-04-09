@@ -15,6 +15,8 @@ spec:
       labels:
         app: jj-gym-api
     spec:
+      imagePullSecrets:
+        - name: ocir-secret
       containers:
         - name: jj-gym-api
           image: REPLACE_IMAGE
@@ -70,4 +72,3 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
-
