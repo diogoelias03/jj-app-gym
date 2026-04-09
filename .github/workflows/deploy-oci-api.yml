@@ -106,6 +106,35 @@ jobs:
             --docker-email='noreply@jjappgym.dev' \
             --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Ensure Postgres secret
+        shell: bash
+        run: |
+          kubectl -n jj-gym create secret generic jj-gym-postgres-secrets \
+            --from-literal=POSTGRES_PASSWORD='${{ secrets.API_POSTGRES_PASSWORD }}' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply Postgres manifests
+        run: kubectl apply -f deploy/oke/postgres-deployment.yaml -f deploy/oke/postgres-service.yaml
+
+      - name: Wait Postgres rollout
+        run: kubectl -n jj-gym rollout status deployment/jj-gym-postgres --timeout=300s
+
+      - name: Prepare API database URL
+        shell: bash
+        run: |
+          if [ "${{ inputs.target_environment }}" = "dev" ]; then
+            echo "DATABASE_URL=postgresql://jj_app_gym:${{ secrets.API_POSTGRES_PASSWORD }}@jj-gym-postgres.jj-gym.svc.cluster.local:5432/jj_app_gym?sslmode=disable" >> "$GITHUB_ENV"
+          else
+            echo "DATABASE_URL=${{ secrets.API_DATABASE_URL }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Seed database (dev)
+        if: ${{ inputs.target_environment == 'dev' }}
+        shell: bash
+        run: |
+          cat api/db/schema.sql | kubectl -n jj-gym exec -i deploy/jj-gym-postgres -- sh -lc "PGPASSWORD='${{ secrets.API_POSTGRES_PASSWORD }}' psql -U jj_app_gym -d jj_app_gym -h 127.0.0.1"
+          cat api/db/seed.sql | kubectl -n jj-gym exec -i deploy/jj-gym-postgres -- sh -lc "PGPASSWORD='${{ secrets.API_POSTGRES_PASSWORD }}' psql -U jj_app_gym -d jj_app_gym -h 127.0.0.1"
+
       - name: Apply base manifests
         shell: bash
         run: |
@@ -117,7 +146,7 @@ jobs:
         shell: bash
         run: |
           kubectl -n jj-gym create secret generic jj-gym-api-secrets \
-            --from-literal=DATABASE_URL='${{ secrets.API_DATABASE_URL }}' \
+            --from-literal=DATABASE_URL="${DATABASE_URL}" \
             --from-literal=JWT_SECRET='${{ secrets.API_JWT_SECRET }}' \
             --from-literal=ADMIN_API_KEY='${{ secrets.API_ADMIN_API_KEY }}' \
             --dry-run=client -o yaml | kubectl apply -f -
@@ -130,10 +159,16 @@ jobs:
         shell: bash
         run: |
           kubectl -n jj-gym get deploy,rs,pods,svc -o wide || true
+          kubectl -n jj-gym describe deployment jj-gym-postgres || true
           kubectl -n jj-gym describe deployment jj-gym-api || true
           for POD in $(kubectl -n jj-gym get pods -l app=jj-gym-api -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || true); do
             echo "### POD: $POD"
             kubectl -n jj-gym describe pod "$POD" || true
             kubectl -n jj-gym logs "$POD" --tail=200 || true
             kubectl -n jj-gym logs "$POD" --previous --tail=200 || true
+          done
+          for POD in $(kubectl -n jj-gym get pods -l app=jj-gym-postgres -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || true); do
+            echo "### POSTGRES POD: $POD"
+            kubectl -n jj-gym describe pod "$POD" || true
+            kubectl -n jj-gym logs "$POD" --tail=200 || true
           done

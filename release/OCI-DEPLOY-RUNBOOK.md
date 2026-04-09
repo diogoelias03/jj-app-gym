@@ -31,6 +31,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\prepare-kubeconfig-secret.ps1
 7. `API_DATABASE_URL`
 8. `API_JWT_SECRET`
 9. `API_ADMIN_API_KEY`
+10. `API_POSTGRES_PASSWORD`
+ - Usado para o PostgreSQL interno do cluster no ambiente `dev`.
 
 ## 2) Pipeline de deploy
 Workflow:
@@ -46,6 +48,8 @@ Execucao:
 1. Job `Build and Publish to OCIR` publica imagem:
 - `<OCI_REGISTRY>/<OCI_NAMESPACE>/<OCI_IMAGE_REPOSITORY>:<commit_sha>`
 2. Job `Rollout on OKE`:
+- garante PostgreSQL interno no namespace `jj-gym` (dev),
+- aplica schema/seed automaticamente no `dev`,
 - aplica manifests em `deploy/oke/`;
 - atualiza secret `jj-gym-api-secrets`;
 - faz rollout do deployment `jj-gym-api`.
@@ -65,4 +69,3 @@ kubectl -n jj-gym get deploy,pods,svc
 kubectl -n jj-gym set image deployment/jj-gym-api jj-gym-api=<imagem_anterior>
 kubectl -n jj-gym rollout status deployment/jj-gym-api
 ```
-

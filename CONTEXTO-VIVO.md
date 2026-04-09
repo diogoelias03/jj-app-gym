@@ -1,6 +1,6 @@
 # Contexto Vivo - JJ App Gym
 
-Atualizado em: 2026-04-09 (America/Sao_Paulo)
+Atualizado em: 2026-04-09 (America/Sao_Paulo) - bloco em execucao
 
 ## Objetivo do projeto
 - Transformar a ideia do app de academia de jiu-jitsu em produto real.
@@ -145,6 +145,10 @@ Atualizado em: 2026-04-09 (America/Sao_Paulo)
 ## Pendencia imediata
 - Configurar `API_DATABASE_URL` do ambiente `dev` para um PostgreSQL acessivel pelo OKE.
 - Enquanto o `DATABASE_URL` apontar para `localhost`, o endpoint `GET /health` (deep check) continuara retornando `500`.
+
+## Trigger de atualizacao (2026-04-09)
+- Usuario solicitou: "atualiza o resumo de contexto" e seguir com proximo bloco.
+- Proximo bloco ativo: fechar conectividade de banco no ambiente `dev` para remover `500` no `GET /health`.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jj-gym-postgres
+  namespace: jj-gym
+  labels:
+    app: jj-gym-postgres
+spec:
+  selector:
+    app: jj-gym-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
