@@ -128,6 +128,26 @@ jobs:
             echo "DATABASE_URL=${{ secrets.API_DATABASE_URL }}" >> "$GITHUB_ENV"
           fi
 
+      - name: Validate API database URL
+        shell: bash
+        run: |
+          if [ -z "${DATABASE_URL}" ]; then
+            echo "DATABASE_URL ausente."
+            exit 1
+          fi
+
+          if [ "${{ inputs.target_environment }}" = "prod" ]; then
+            if [[ "${DATABASE_URL}" == *"localhost"* ]] || [[ "${DATABASE_URL}" == *"127.0.0.1"* ]]; then
+              echo "DATABASE_URL de prod invalida: nao pode apontar para localhost."
+              exit 1
+            fi
+          fi
+
+          if [[ ! "${DATABASE_URL}" =~ ^postgres(ql)?:// ]]; then
+            echo "DATABASE_URL invalida: formato esperado postgres:// ou postgresql://"
+            exit 1
+          fi
+
       - name: Seed database (dev)
         if: ${{ inputs.target_environment == 'dev' }}
         shell: bash

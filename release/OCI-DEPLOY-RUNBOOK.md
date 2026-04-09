@@ -33,6 +33,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\prepare-kubeconfig-secret.ps1
 9. `API_ADMIN_API_KEY`
 10. `API_POSTGRES_PASSWORD`
  - Usado para o PostgreSQL interno do cluster no ambiente `dev`.
+ - Para `prod`, o pipeline exige `API_DATABASE_URL` valida e bloqueia `localhost/127.0.0.1`.
 
 ## 2) Pipeline de deploy
 Workflow:
