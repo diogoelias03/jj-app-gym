@@ -114,7 +114,9 @@ jobs:
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Apply Postgres manifests
-        run: kubectl apply -f deploy/oke/postgres-deployment.yaml -f deploy/oke/postgres-service.yaml
+        run: |
+          kubectl apply -f deploy/oke/postgres-deployment.yaml -f deploy/oke/postgres-service.yaml
+          kubectl apply -f deploy/oke/postgres-pdb.yaml -f deploy/oke/postgres-networkpolicy.yaml
 
       - name: Wait Postgres rollout
         run: kubectl -n jj-gym rollout status deployment/jj-gym-postgres --timeout=300s
@@ -166,7 +168,7 @@ jobs:
         run: |
           IMAGE_REF="${{ secrets.OCI_REGISTRY }}/${{ secrets.OCI_NAMESPACE }}/${{ secrets.OCI_IMAGE_REPOSITORY }}:${GITHUB_SHA}"
           sed "s|REPLACE_IMAGE|$IMAGE_REF|g" deploy/oke/api-deployment.yaml | kubectl apply -f -
-          kubectl apply -f deploy/oke/api-service.yaml
+          kubectl apply -f deploy/oke/api-service.yaml -f deploy/oke/api-pdb.yaml
 
       - name: Apply API secrets
         shell: bash

@@ -54,6 +54,8 @@ Execucao:
 - garante PostgreSQL interno no namespace `jj-gym` (dev),
 - aplica schema/seed automaticamente no `dev`,
 - aplica manifests em `deploy/oke/`;
+- aplica PDBs de API/PostgreSQL para resiliencia em manutencao;
+- aplica NetworkPolicy no PostgreSQL (acesso apenas via API);
 - atualiza secret `jj-gym-api-secrets`;
 - faz rollout do deployment `jj-gym-api`.
 
