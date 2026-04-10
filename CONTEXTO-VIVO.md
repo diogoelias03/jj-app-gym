@@ -184,6 +184,15 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
   - DR drill automatizado adicionado:
     - workflow `.github/workflows/dr-drill-oke-postgres.yml`
     - execucao manual (`dev`/`prod`) e mensal em `prod`.
+  - governanca de configuracao reforcada:
+    - script de validacao de secrets por ambiente:
+      - `scripts/validate-github-secrets.ps1`
+    - runbook operacional:
+      - `release/SECRETS-VALIDATION-RUNBOOK.md`
+  - ajuste de robustez na validacao de secrets:
+    - em falha de conectividade GitHub, status agora fica `UNKNOWN` e faltas aparecem como `N/A (connectivity)` para evitar falso negativo.
+  - execucao real registrada:
+    - `release/reports/secrets-check-20260410-140153.md` (resultado `UNKNOWN` por indisponibilidade de rede com `api.github.com:443`).
 
 ## Pendencia imediata
 - Executar e validar a primeira execucao do workflow `Backup OKE Postgres`.
@@ -192,6 +201,7 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
 - Validar comportamento da NetworkPolicy no cluster (CNI) apos o proximo deploy.
 - Executar primeiro DR drill assistido com backup recente e registrar resultado.
 - Validar primeira execucao do workflow `DR Drill OKE Postgres`.
+- Executar primeira validacao de secrets com relatorio versionado.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
