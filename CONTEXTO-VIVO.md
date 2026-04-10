@@ -1,6 +1,6 @@
 # Contexto Vivo - JJ App Gym
 
-Atualizado em: 2026-04-09 (America/Sao_Paulo)
+Atualizado em: 2026-04-10 (America/Sao_Paulo)
 
 ## Objetivo do projeto
 - Transformar a ideia do app de academia de jiu-jitsu em produto real.
@@ -142,14 +142,6 @@ Atualizado em: 2026-04-09 (America/Sao_Paulo)
 - Ajuste de disponibilidade da API:
   - endpoint `GET /health/live` adicionado para probes de liveness/readiness sem dependencia de banco.
 
-## Pendencia imediata
-- Configurar `API_DATABASE_URL` do ambiente `dev` para um PostgreSQL acessivel pelo OKE.
-- Enquanto o `DATABASE_URL` apontar para `localhost`, o endpoint `GET /health` (deep check) continuara retornando `500`.
-
-## Trigger de atualizacao (2026-04-09)
-- Usuario solicitou: "atualiza o resumo de contexto" e seguir com proximo bloco.
-- Proximo bloco ativo: fechar conectividade de banco no ambiente `dev` para remover `500` no `GET /health`.
-
 ## Bloco concluido (2026-04-09)
 - Banco `dev` conectado no OKE:
   - PostgreSQL interno adicionado para ambiente de desenvolvimento (`deploy/oke/postgres-deployment.yaml` e `deploy/oke/postgres-service.yaml`).
@@ -159,6 +151,22 @@ Atualizado em: 2026-04-09 (America/Sao_Paulo)
   - `rollout_oke` agora garante banco, prepara `DATABASE_URL` por ambiente e sobe API com seed no `dev`.
 - Validacao:
   - Run de sucesso: `Deploy OCI API` #`24208548136` (build + rollout verdes).
+
+## Bloco concluido (2026-04-10)
+- Decisao de custo para producao executada:
+  - opcao 2 aplicada (PostgreSQL interno no OKE tambem em `prod`).
+  - deploy `prod` validado em run verde (`24247275502`).
+  - senha do banco interno padronizada em `dev`/`prod` via secret `API_POSTGRES_PASSWORD`.
+- Estabilizacao operacional iniciada:
+  - scripts de backup e restore do PostgreSQL interno adicionados:
+    - `scripts/pg-backup-oke.ps1`
+    - `scripts/pg-restore-oke.ps1`
+  - runbook operacional adicionado:
+    - `release/DB-BACKUP-RESTORE-RUNBOOK.md`
+
+## Pendencia imediata
+- Executar primeira rotina manual de backup de `prod` e guardar artefato de referencia.
+- Evoluir para automacao agendada de backup na proxima onda.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
