@@ -30,3 +30,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\dr-drill-restore-validate.ps1
 - Tabelas essenciais restauradas.
 - Dados basicos (`belts`) restaurados.
 
+## Automacao no GitHub Actions
+- Workflow: `.github/workflows/dr-drill-oke-postgres.yml`
+- Execucao:
+  - manual para `dev`/`prod`,
+  - agendada mensalmente no dia 1 (UTC 06:00) para `prod`.
+- Saida:
+  - relatorio de DR drill como artifact com retencao de 30 dias.

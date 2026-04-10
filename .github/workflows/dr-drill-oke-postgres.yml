@@ -1,0 +1,161 @@
+name: DR Drill OKE Postgres
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: "Ambiente alvo"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: prod
+  schedule:
+    - cron: "0 6 1 * *"
+
+jobs:
+  dr_drill:
+    name: DR drill restore validation
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set target environment
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "TARGET_ENV=prod" >> "$GITHUB_ENV"
+          else
+            echo "TARGET_ENV=${{ inputs.target_environment }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.30.0
+
+      - name: Setup OCI CLI
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install oci-cli
+
+      - name: Configure OCI CLI
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.oci"
+          cat > "$HOME/.oci/config" <<EOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=${{ secrets.OCI_REGION }}
+          key_file=$HOME/.oci/oci_api_key.pem
+          EOF
+          printf '%s' "${{ secrets.OCI_PRIVATE_KEY_PEM }}" > "$HOME/.oci/oci_api_key.pem"
+          chmod 600 "$HOME/.oci/config" "$HOME/.oci/oci_api_key.pem"
+
+      - name: Prepare kubeconfig
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "${{ secrets.OKE_KUBECONFIG_B64 }}" | base64 -d > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Build backup for drill
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/backups release/reports
+          POD="$(kubectl -n jj-gym get pods -l app=jj-gym-postgres -o jsonpath='{.items[0].metadata.name}')"
+          if [ -z "$POD" ]; then
+            echo "Pod do PostgreSQL nao encontrado."
+            exit 1
+          fi
+
+          TS="$(date -u +%Y%m%d-%H%M%S)"
+          BACKUP_FILE="release/backups/pg-${TARGET_ENV}-drill-${TS}.sql"
+          kubectl -n jj-gym exec "$POD" -- sh -lc 'PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -U jj_app_gym -d jj_app_gym -h 127.0.0.1' > "$BACKUP_FILE"
+          echo "BACKUP_FILE=$BACKUP_FILE" >> "$GITHUB_ENV"
+          echo "REPORT_FILE=release/reports/dr-drill-${TARGET_ENV}-${TS}.md" >> "$GITHUB_ENV"
+
+      - name: Validate restore in temp database
+        shell: bash
+        run: |
+          set -euo pipefail
+          POD="$(kubectl -n jj-gym get pods -l app=jj-gym-postgres -o jsonpath='{.items[0].metadata.name}')"
+          TEMP_DB="jj_app_gym_drill_$(date -u +%Y%m%d%H%M%S)"
+          START_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          STATUS="PASS"
+          NOTES="Restore em banco temporario concluido com validacoes basicas."
+          TABLES_COUNT="0"
+          BELTS_COUNT="0"
+
+          cleanup() {
+            kubectl -n jj-gym exec "$POD" -- sh -lc "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -v ON_ERROR_STOP=1 -U jj_app_gym -d postgres -h 127.0.0.1 -c 'DROP DATABASE IF EXISTS ${TEMP_DB};'" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          if ! kubectl -n jj-gym exec "$POD" -- sh -lc "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -v ON_ERROR_STOP=1 -U jj_app_gym -d postgres -h 127.0.0.1 -c 'CREATE DATABASE ${TEMP_DB};'"; then
+            STATUS="FAIL"
+            NOTES="Falha ao criar banco temporario."
+          fi
+
+          if [ "$STATUS" = "PASS" ]; then
+            if ! kubectl -n jj-gym exec -i "$POD" -- sh -lc "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -v ON_ERROR_STOP=1 -U jj_app_gym -d ${TEMP_DB} -h 127.0.0.1" < "$BACKUP_FILE"; then
+              STATUS="FAIL"
+              NOTES="Falha ao aplicar restore no banco temporario."
+            fi
+          fi
+
+          if [ "$STATUS" = "PASS" ]; then
+            TABLES_COUNT="$(kubectl -n jj-gym exec "$POD" -- sh -lc "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -t -A -U jj_app_gym -d ${TEMP_DB} -h 127.0.0.1 -c \"select count(*) from information_schema.tables where table_schema='public' and table_name in ('branches','belts','students','class_sessions','attendances');\"")"
+            BELTS_COUNT="$(kubectl -n jj-gym exec "$POD" -- sh -lc "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -t -A -U jj_app_gym -d ${TEMP_DB} -h 127.0.0.1 -c 'select count(*) from belts;'")"
+            TABLES_COUNT="$(echo "$TABLES_COUNT" | tr -d '[:space:]')"
+            BELTS_COUNT="$(echo "$BELTS_COUNT" | tr -d '[:space:]')"
+
+            if [ "${TABLES_COUNT:-0}" -lt 5 ]; then
+              STATUS="FAIL"
+              NOTES="Validacao falhou: tabelas essenciais ausentes."
+            fi
+
+            if [ "$STATUS" = "PASS" ] && [ "${BELTS_COUNT:-0}" -lt 5 ]; then
+              STATUS="FAIL"
+              NOTES="Validacao falhou: dados essenciais de belts ausentes."
+            fi
+          fi
+
+          END_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          cat > "$REPORT_FILE" <<EOF
+# DR Drill Report
+
+- Status: $STATUS
+- Environment: $TARGET_ENV
+- Namespace: jj-gym
+- PostgresPod: $POD
+- BackupFile: $BACKUP_FILE
+- TempDatabase: $TEMP_DB
+- StartUTC: $START_TS
+- EndUTC: $END_TS
+- TablesValidated: $TABLES_COUNT
+- BeltsCount: $BELTS_COUNT
+- Notes: $NOTES
+EOF
+
+          if [ "$STATUS" != "PASS" ]; then
+            echo "DR drill falhou."
+            exit 1
+          fi
+
+      - name: Upload drill report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dr-drill-report-${{ env.TARGET_ENV }}-${{ github.run_id }}
+          path: ${{ env.REPORT_FILE }}
+          if-no-files-found: error
+          retention-days: 30
+

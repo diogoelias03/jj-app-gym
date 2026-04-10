@@ -181,6 +181,9 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
     - script de validacao de restore em banco temporario:
       - `scripts/dr-drill-restore-validate.ps1`
     - relatorio automatico em `release/reports/`.
+  - DR drill automatizado adicionado:
+    - workflow `.github/workflows/dr-drill-oke-postgres.yml`
+    - execucao manual (`dev`/`prod`) e mensal em `prod`.
 
 ## Pendencia imediata
 - Executar e validar a primeira execucao do workflow `Backup OKE Postgres`.
@@ -188,6 +191,7 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
 - Validar primeira execucao do workflow `Smoke OKE API`.
 - Validar comportamento da NetworkPolicy no cluster (CNI) apos o proximo deploy.
 - Executar primeiro DR drill assistido com backup recente e registrar resultado.
+- Validar primeira execucao do workflow `DR Drill OKE Postgres`.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
