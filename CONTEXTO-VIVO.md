@@ -176,12 +176,18 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
     - PDB da API (`deploy/oke/api-pdb.yaml`)
     - PDB do PostgreSQL (`deploy/oke/postgres-pdb.yaml`)
     - NetworkPolicy do PostgreSQL (`deploy/oke/postgres-networkpolicy.yaml`) restringindo acesso ao app.
+  - DR drill preparado:
+    - checklist guiado: `release/DR-DRILL-CHECKLIST.md`
+    - script de validacao de restore em banco temporario:
+      - `scripts/dr-drill-restore-validate.ps1`
+    - relatorio automatico em `release/reports/`.
 
 ## Pendencia imediata
 - Executar e validar a primeira execucao do workflow `Backup OKE Postgres`.
 - Configurar secret `OCI_BACKUP_BUCKET` para ativar retencao de longo prazo no OCI Object Storage.
 - Validar primeira execucao do workflow `Smoke OKE API`.
 - Validar comportamento da NetworkPolicy no cluster (CNI) apos o proximo deploy.
+- Executar primeiro DR drill assistido com backup recente e registrar resultado.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
