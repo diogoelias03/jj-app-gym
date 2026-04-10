@@ -44,3 +44,7 @@ Comportamento:
 - agendado diariamente para `prod` (UTC 05:00),
 - execucao manual para `dev` ou `prod`,
 - gera artifact `.sql.gz` com retencao de 14 dias.
+- se o secret `OCI_BACKUP_BUCKET` estiver definido, envia copia para OCI Object Storage.
+
+## 6) Secret opcional para retencao longa
+- `OCI_BACKUP_BUCKET`: nome do bucket OCI para armazenar backups de longo prazo.

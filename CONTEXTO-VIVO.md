@@ -166,10 +166,12 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
   - automacao de backup no GitHub Actions adicionada:
     - `.github/workflows/backup-oke-postgres.yml`
     - agendamento diario para `prod` e execucao manual para `dev`/`prod`.
+  - retencao longa planejada no mesmo workflow:
+    - upload opcional para OCI Object Storage quando `OCI_BACKUP_BUCKET` estiver configurado.
 
 ## Pendencia imediata
 - Executar e validar a primeira execucao do workflow `Backup OKE Postgres`.
-- Definir destino de retenção de longo prazo (fora de artifacts do GitHub).
+- Configurar secret `OCI_BACKUP_BUCKET` para ativar retencao de longo prazo no OCI Object Storage.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.

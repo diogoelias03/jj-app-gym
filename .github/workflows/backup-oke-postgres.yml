@@ -31,6 +31,11 @@ jobs:
           else
             echo "TARGET_ENV=${{ inputs.target_environment }}" >> "$GITHUB_ENV"
           fi
+          if [ -n "${{ secrets.OCI_BACKUP_BUCKET }}" ]; then
+            echo "HAS_BACKUP_BUCKET=true" >> "$GITHUB_ENV"
+          else
+            echo "HAS_BACKUP_BUCKET=false" >> "$GITHUB_ENV"
+          fi
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
@@ -90,3 +95,15 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Upload backup to OCI Object Storage
+        if: ${{ env.HAS_BACKUP_BUCKET == 'true' }}
+        shell: bash
+        run: |
+          OBJECT_NAME="jj-app-gym/backups/${TARGET_ENV}/$(basename "${BACKUP_FILE}")"
+          oci os object put \
+            --namespace "${{ secrets.OCI_NAMESPACE }}" \
+            --bucket-name "${{ secrets.OCI_BACKUP_BUCKET }}" \
+            --name "${OBJECT_NAME}" \
+            --file "${BACKUP_FILE}" \
+            --force
+          echo "Backup enviado para OCI Object Storage: ${OBJECT_NAME}"
