@@ -203,6 +203,13 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
 - Validar primeira execucao do workflow `DR Drill OKE Postgres`.
 - Executar primeira validacao de secrets com relatorio versionado.
 
+## Bloco concluido (2026-04-10 - operacao offline)
+- Sincronizacao resiliente preparada para janela com rede instavel:
+  - script `scripts/push-when-online.ps1` criado com retry de push (`branch` + `tags`) e relatorio automatico.
+  - runbook `release/PUSH-SYNC-RUNBOOK.md` criado.
+- Validacao real offline executada:
+  - relatorio `release/reports/push-sync-20260410-162241.md` gerado com status `FAILED` por indisponibilidade de rede (`github.com:443`), sem perda de commits locais.
+
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
 - Atualizar sempre que houver a trigger:
