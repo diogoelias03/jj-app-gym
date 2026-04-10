@@ -1,10 +1,10 @@
 # Cronograma Geral - JJ App Gym
 
-Atualizado em: 2026-04-06
+Atualizado em: 2026-04-10
 
 ## Visao executiva
-- Status atual: **Go-Live Controlado**
-- Fase atual: **Transicao para Estabilizacao Pos-Go-Live**
+- Status atual: **Estabilizacao Pos-Go-Live**
+- Fase atual: **Fase 5 em execucao**
 - Horizonte planejado: 12 semanas (MVP estabilizado + inicio V2)
 
 ## Linha do tempo (resumo)
@@ -24,7 +24,7 @@ Atualizado em: 2026-04-06
 - Periodo: 2026-04-01
 - Entregas: CI, templates de governanca, runbooks de RC e go-live, preflight automatizado, checkpoint RC final GO.
 
-5. Fase 4 - Go-Live Controlado (Em andamento)
+5. Fase 4 - Go-Live Controlado (Concluida)
 - Periodo alvo: 2026-04-02 a 2026-04-05
 - Objetivo: executar janela de lancamento e monitorar 24h.
 - Criterios de conclusao:
@@ -32,13 +32,14 @@ Atualizado em: 2026-04-06
   - comunicacao de go-live concluida;
   - monitoramento inicial registrado.
 
-6. Fase 5 - Estabilizacao pos-go-live (Em preparacao)
+6. Fase 5 - Estabilizacao pos-go-live (Em andamento)
 - Periodo alvo: 2026-04-06 a 2026-04-20
 - Objetivo: corrigir defeitos de producao e melhorar confiabilidade.
 - Entregas esperadas:
   - reducao de incidentes;
   - melhoria de UX de fluxos criticos;
   - baseline de metricas de uso (check-in, login, metas).
+  - automacao de backup/smoke/dr-drill validada.
 
 7. Fase 6 - Inicio V2 (Planejada)
 - Periodo alvo: 2026-04-21 a 2026-06-15
@@ -61,3 +62,8 @@ Atualizado em: 2026-04-06
 1. Usar runbook de go-live e preflight antes de cada janela.
 2. Priorizar correcoes P0/P1 na estabilizacao.
 3. Replanejar escopo V2 semanalmente com base em dados reais.
+
+## Proximos blocos operacionais (curto prazo)
+1. Sincronizar commits pendentes para `origin/main` na primeira janela sem bloqueio de rede.
+2. Executar e validar no GitHub os workflows: `Backup OKE Postgres`, `Smoke OKE API`, `DR Drill OKE Postgres`.
+3. Configurar `OCI_BACKUP_BUCKET` para retenção longa no OCI Object Storage.
