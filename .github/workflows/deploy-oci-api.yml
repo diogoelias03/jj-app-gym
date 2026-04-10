@@ -122,7 +122,7 @@ jobs:
       - name: Prepare API database URL
         shell: bash
         run: |
-          if [ "${{ inputs.target_environment }}" = "dev" ]; then
+          if [ "${{ inputs.target_environment }}" = "dev" ] || [ "${{ inputs.target_environment }}" = "prod" ]; then
             echo "DATABASE_URL=postgresql://jj_app_gym:${{ secrets.API_POSTGRES_PASSWORD }}@jj-gym-postgres.jj-gym.svc.cluster.local:5432/jj_app_gym?sslmode=disable" >> "$GITHUB_ENV"
           else
             echo "DATABASE_URL=${{ secrets.API_DATABASE_URL }}" >> "$GITHUB_ENV"
@@ -136,7 +136,7 @@ jobs:
             exit 1
           fi
 
-          if [ "${{ inputs.target_environment }}" = "prod" ]; then
+          if [ "${{ inputs.target_environment }}" = "prod" ] && [ -n "${{ secrets.API_DATABASE_URL }}" ]; then
             if [[ "${DATABASE_URL}" == *"localhost"* ]] || [[ "${DATABASE_URL}" == *"127.0.0.1"* ]]; then
               echo "DATABASE_URL de prod invalida: nao pode apontar para localhost."
               exit 1
@@ -154,6 +154,12 @@ jobs:
         run: |
           cat api/db/schema.sql | kubectl -n jj-gym exec -i deploy/jj-gym-postgres -- sh -lc "PGPASSWORD='${{ secrets.API_POSTGRES_PASSWORD }}' psql -U jj_app_gym -d jj_app_gym -h 127.0.0.1"
           cat api/db/seed.sql | kubectl -n jj-gym exec -i deploy/jj-gym-postgres -- sh -lc "PGPASSWORD='${{ secrets.API_POSTGRES_PASSWORD }}' psql -U jj_app_gym -d jj_app_gym -h 127.0.0.1"
+
+      - name: Seed database (prod - schema only)
+        if: ${{ inputs.target_environment == 'prod' }}
+        shell: bash
+        run: |
+          cat api/db/schema.sql | kubectl -n jj-gym exec -i deploy/jj-gym-postgres -- sh -lc "PGPASSWORD='${{ secrets.API_POSTGRES_PASSWORD }}' psql -U jj_app_gym -d jj_app_gym -h 127.0.0.1"
 
       - name: Apply base manifests
         shell: bash
