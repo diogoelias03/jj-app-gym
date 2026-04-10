@@ -1,0 +1,103 @@
+name: Smoke OKE API
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: "Ambiente alvo"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: prod
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  smoke:
+    name: Smoke check API on OKE
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set target environment
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "TARGET_ENV=prod" >> "$GITHUB_ENV"
+          else
+            echo "TARGET_ENV=${{ inputs.target_environment }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.30.0
+
+      - name: Setup OCI CLI
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install oci-cli
+
+      - name: Configure OCI CLI
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.oci"
+          cat > "$HOME/.oci/config" <<EOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=${{ secrets.OCI_REGION }}
+          key_file=$HOME/.oci/oci_api_key.pem
+          EOF
+          printf '%s' "${{ secrets.OCI_PRIVATE_KEY_PEM }}" > "$HOME/.oci/oci_api_key.pem"
+          chmod 600 "$HOME/.oci/config" "$HOME/.oci/oci_api_key.pem"
+
+      - name: Prepare kubeconfig
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "${{ secrets.OKE_KUBECONFIG_B64 }}" | base64 -d > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Validate deployments
+        shell: bash
+        run: |
+          kubectl -n jj-gym get deploy
+          kubectl -n jj-gym rollout status deployment/jj-gym-api --timeout=180s
+          kubectl -n jj-gym rollout status deployment/jj-gym-postgres --timeout=180s
+
+      - name: Smoke health/live
+        shell: bash
+        run: |
+          kubectl -n jj-gym run smoke-curl-live --image=curlimages/curl:8.8.0 --rm -i --restart=Never \
+            -- curl -fsS "http://jj-gym-api.jj-gym.svc.cluster.local/health/live"
+
+      - name: Smoke health/deep
+        shell: bash
+        run: |
+          kubectl -n jj-gym run smoke-curl-deep --image=curlimages/curl:8.8.0 --rm -i --restart=Never \
+            -- curl -fsS "http://jj-gym-api.jj-gym.svc.cluster.local/health"
+
+      - name: Debug (on failure)
+        if: ${{ failure() }}
+        shell: bash
+        run: |
+          kubectl -n jj-gym get deploy,rs,pods,svc -o wide || true
+          for POD in $(kubectl -n jj-gym get pods -l app=jj-gym-api -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || true); do
+            echo "### API POD: $POD"
+            kubectl -n jj-gym describe pod "$POD" || true
+            kubectl -n jj-gym logs "$POD" --tail=200 || true
+            kubectl -n jj-gym logs "$POD" --previous --tail=200 || true
+          done
+          for POD in $(kubectl -n jj-gym get pods -l app=jj-gym-postgres -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || true); do
+            echo "### PG POD: $POD"
+            kubectl -n jj-gym describe pod "$POD" || true
+            kubectl -n jj-gym logs "$POD" --tail=200 || true
+          done
+

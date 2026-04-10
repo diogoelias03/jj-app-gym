@@ -168,10 +168,15 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
     - agendamento diario para `prod` e execucao manual para `dev`/`prod`.
   - retencao longa planejada no mesmo workflow:
     - upload opcional para OCI Object Storage quando `OCI_BACKUP_BUCKET` estiver configurado.
+  - observabilidade operacional reforcada:
+    - workflow `.github/workflows/smoke-oke-api.yml` criado,
+    - smoke automatizado a cada 6h em `prod` e manual para `dev`/`prod`.
+    - `release/GO-LIVE-RUNBOOK.md` atualizado com execucao de smoke continuo.
 
 ## Pendencia imediata
 - Executar e validar a primeira execucao do workflow `Backup OKE Postgres`.
 - Configurar secret `OCI_BACKUP_BUCKET` para ativar retencao de longo prazo no OCI Object Storage.
+- Validar primeira execucao do workflow `Smoke OKE API`.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.

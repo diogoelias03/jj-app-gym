@@ -52,3 +52,14 @@ powershell -ExecutionPolicy Bypass -File .\scripts\go-live-close.ps1 -LogPath ".
 1. Reverter para ultimo checkpoint estavel.
 2. Comunicar rollback e impacto.
 3. Abrir plano de correcao e nova janela.
+
+## Smoke automatizado continuo
+1. Workflow:
+- `.github/workflows/smoke-oke-api.yml`
+2. Execucao:
+- agendada a cada 6 horas (padrao em `prod`);
+- manual para `dev`/`prod`.
+3. Validacoes:
+- rollout de `jj-gym-api` e `jj-gym-postgres`;
+- endpoint `/health/live`;
+- endpoint `/health` com checagem de banco.
