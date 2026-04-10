@@ -1,0 +1,92 @@
+name: Backup OKE Postgres
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: "Ambiente alvo"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: prod
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  backup:
+    name: Backup PostgreSQL on OKE
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set target environment
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "TARGET_ENV=prod" >> "$GITHUB_ENV"
+          else
+            echo "TARGET_ENV=${{ inputs.target_environment }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.30.0
+
+      - name: Setup OCI CLI
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install oci-cli
+
+      - name: Configure OCI CLI
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.oci"
+          cat > "$HOME/.oci/config" <<EOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=${{ secrets.OCI_REGION }}
+          key_file=$HOME/.oci/oci_api_key.pem
+          EOF
+          printf '%s' "${{ secrets.OCI_PRIVATE_KEY_PEM }}" > "$HOME/.oci/oci_api_key.pem"
+          chmod 600 "$HOME/.oci/config" "$HOME/.oci/oci_api_key.pem"
+
+      - name: Prepare kubeconfig
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "${{ secrets.OKE_KUBECONFIG_B64 }}" | base64 -d > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Create backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/backups
+          POD="$(kubectl -n jj-gym get pods -l app=jj-gym-postgres -o jsonpath='{.items[0].metadata.name}')"
+          if [ -z "$POD" ]; then
+            echo "Pod do PostgreSQL nao encontrado."
+            exit 1
+          fi
+
+          TS="$(date -u +%Y%m%d-%H%M%S)"
+          OUT_FILE="release/backups/pg-${TARGET_ENV}-${TS}.sql"
+          kubectl -n jj-gym exec "$POD" -- sh -lc 'PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -U jj_app_gym -d jj_app_gym -h 127.0.0.1' > "$OUT_FILE"
+          gzip -9 "$OUT_FILE"
+          echo "BACKUP_FILE=${OUT_FILE}.gz" >> "$GITHUB_ENV"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgres-backup-${{ env.TARGET_ENV }}-${{ github.run_id }}
+          path: ${{ env.BACKUP_FILE }}
+          if-no-files-found: error
+          retention-days: 14
+

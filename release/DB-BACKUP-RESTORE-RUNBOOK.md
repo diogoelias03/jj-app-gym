@@ -36,3 +36,11 @@ kubectl -n jj-gym exec deploy/jj-gym-postgres -- sh -lc 'PGPASSWORD="$POSTGRES_P
 - `prod`: backup diario (janela de baixa movimentacao).
 - `dev`: backup antes de mudancas estruturais.
 
+## 5) Automacao no GitHub Actions
+Workflow:
+- `.github/workflows/backup-oke-postgres.yml`
+
+Comportamento:
+- agendado diariamente para `prod` (UTC 05:00),
+- execucao manual para `dev` ou `prod`,
+- gera artifact `.sql.gz` com retencao de 14 dias.

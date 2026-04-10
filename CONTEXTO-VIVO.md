@@ -163,10 +163,13 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
     - `scripts/pg-restore-oke.ps1`
   - runbook operacional adicionado:
     - `release/DB-BACKUP-RESTORE-RUNBOOK.md`
+  - automacao de backup no GitHub Actions adicionada:
+    - `.github/workflows/backup-oke-postgres.yml`
+    - agendamento diario para `prod` e execucao manual para `dev`/`prod`.
 
 ## Pendencia imediata
-- Executar primeira rotina manual de backup de `prod` e guardar artefato de referencia.
-- Evoluir para automacao agendada de backup na proxima onda.
+- Executar e validar a primeira execucao do workflow `Backup OKE Postgres`.
+- Definir destino de retenção de longo prazo (fora de artifacts do GitHub).
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
