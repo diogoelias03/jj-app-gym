@@ -1,10 +1,10 @@
 # Cronograma Geral - JJ App Gym
 
-Atualizado em: 2026-04-10
+Atualizado em: 2026-05-05
 
 ## Visao executiva
-- Status atual: **Estabilizacao Pos-Go-Live**
-- Fase atual: **Fase 5 em execucao**
+- Status atual: **Retomada sem OCI**
+- Fase atual: **Fase 5 estendida**
 - Horizonte planejado: 12 semanas (MVP estabilizado + inicio V2)
 
 ## Linha do tempo (resumo)
@@ -32,14 +32,16 @@ Atualizado em: 2026-04-10
   - comunicacao de go-live concluida;
   - monitoramento inicial registrado.
 
-6. Fase 5 - Estabilizacao pos-go-live (Em andamento)
-- Periodo alvo: 2026-04-06 a 2026-04-20
+6. Fase 5 - Estabilizacao pos-go-live (Estendida)
+- Periodo alvo original: 2026-04-06 a 2026-04-20
+- Novo periodo de retomada: 2026-05-05 a 2026-05-17
 - Objetivo: corrigir defeitos de producao e melhorar confiabilidade.
 - Entregas esperadas:
   - reducao de incidentes;
   - melhoria de UX de fluxos criticos;
   - baseline de metricas de uso (check-in, login, metas).
   - automacao de backup/smoke/dr-drill validada.
+  - fluxo local sem OCI validado para continuidade do desenvolvimento.
 
 7. Fase 6 - Inicio V2 (Planejada)
 - Periodo alvo: 2026-04-21 a 2026-06-15
@@ -64,6 +66,6 @@ Atualizado em: 2026-04-10
 3. Replanejar escopo V2 semanalmente com base em dados reais.
 
 ## Proximos blocos operacionais (curto prazo)
-1. Sincronizar commits pendentes para `origin/main` na primeira janela sem bloqueio de rede.
-2. Executar e validar no GitHub os workflows: `Backup OKE Postgres`, `Smoke OKE API`, `DR Drill OKE Postgres`.
-3. Configurar `OCI_BACKUP_BUCKET` para retenção longa no OCI Object Storage.
+1. Manter workflows OKE apenas manuais enquanto OCI estiver desprovisionado.
+2. Rodar desenvolvimento e QA em PostgreSQL local.
+3. Definir novo alvo de deploy barato/cloud-agnostic antes de religar automacoes recorrentes.

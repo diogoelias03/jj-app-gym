@@ -1,6 +1,6 @@
 # Contexto Vivo - JJ App Gym
 
-Atualizado em: 2026-04-10 (America/Sao_Paulo)
+Atualizado em: 2026-05-05 (America/Sao_Paulo)
 
 ## Objetivo do projeto
 - Transformar a ideia do app de academia de jiu-jitsu em produto real.
@@ -209,6 +209,31 @@ Atualizado em: 2026-04-10 (America/Sao_Paulo)
   - runbook `release/PUSH-SYNC-RUNBOOK.md` criado.
 - Validacao real offline executada:
   - relatorio `release/reports/push-sync-20260410-162241.md` gerado com status `FAILED` por indisponibilidade de rede (`github.com:443`), sem perda de commits locais.
+
+## Bloco concluido (2026-05-05 - retomada sem OCI)
+- Ambiente OCI/OKE esta desprovisionado para manter custo em zero.
+- Alertas recorrentes do GitHub Actions foram tratados:
+  - schedules removidos de `.github/workflows/smoke-oke-api.yml`;
+  - schedules removidos de `.github/workflows/backup-oke-postgres.yml`;
+  - schedules removidos de `.github/workflows/dr-drill-oke-postgres.yml`.
+- Workflows OKE permanecem disponiveis para execucao manual quando a nuvem voltar.
+- Docker nao esta disponivel no PATH desta maquina.
+- Retomada local feita com PostgreSQL 17 local em `localhost:5432`.
+- Banco isolado criado e populado:
+  - `jj_app_gym_resume_20260505`.
+- API local validada em:
+  - `http://127.0.0.1:3000`.
+- Smoke MVP executado com sucesso:
+  - health,
+  - login,
+  - classes,
+  - dashboard,
+  - metas,
+  - feedback do instrutor,
+  - check-in QR.
+- Novo apoio operacional:
+  - `scripts/start-api-local-postgres.ps1`;
+  - `release/RETOMADA-SEM-OCI-RUNBOOK.md`.
 
 ## Regra de manutencao deste resumo
 - Atualizar este arquivo ao fim de cada bloco.
