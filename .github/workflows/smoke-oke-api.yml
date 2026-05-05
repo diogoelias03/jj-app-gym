@@ -11,8 +11,6 @@ on:
           - dev
           - prod
         default: prod
-  schedule:
-    - cron: "0 */6 * * *"
 
 jobs:
   smoke:
@@ -100,4 +98,3 @@ jobs:
             kubectl -n jj-gym describe pod "$POD" || true
             kubectl -n jj-gym logs "$POD" --tail=200 || true
           done
-

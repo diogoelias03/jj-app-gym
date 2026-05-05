@@ -11,8 +11,6 @@ on:
           - dev
           - prod
         default: prod
-  schedule:
-    - cron: "0 6 1 * *"
 
 jobs:
   dr_drill:
@@ -158,4 +156,3 @@ EOF
           path: ${{ env.REPORT_FILE }}
           if-no-files-found: error
           retention-days: 30
-
